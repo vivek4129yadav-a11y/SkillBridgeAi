@@ -33,7 +33,7 @@ const Home = () => (
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <ReactLenis
           root
           options={{
