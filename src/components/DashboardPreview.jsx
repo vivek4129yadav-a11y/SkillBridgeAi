@@ -45,7 +45,7 @@ const DashboardPreview = () => {
                                 <div className="w-full h-full rounded-full bg-slate-900 border-2 border-slate-800"></div>
                             </div>
                             <div>
-                                <h4 className="text-lg font-bold text-white">Welcome back, Alex</h4>
+                                <h4 className="text-lg font-bold text-white">Welcome back, Vivek</h4>
                                 <p className="text-sm text-slate-400">Frontend Developer Path</p>
                             </div>
                         </div>

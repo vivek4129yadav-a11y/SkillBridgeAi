@@ -13,6 +13,8 @@ import Footer from './components/Footer';
 import ReactLenis from 'lenis/react';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import AILoadingScreen from './components/AILoadingScreen';
+import ProfileCreation from './components/ProfileCreation';
 
 const Home = () => (
   <>
@@ -51,6 +53,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/loading" element={<AILoadingScreen />} />
+              <Route path="/profile" element={<ProfileCreation />} />
             </Routes>
           </div>
         </ReactLenis>

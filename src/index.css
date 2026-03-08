@@ -1,11 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #3b82f6; /* Blue 500 */
-  --color-secondary: #8b5cf6; /* Violet 500 */
-  --color-dark: #0f172a; /* Slate 900 */
-  --color-darker: #020617; /* Slate 950 */
-  --color-card: rgba(30, 41, 59, 0.7); /* Slate 800 with opacity */
+  --color-primary: #3b82f6;
+  /* Blue 500 */
+  --color-secondary: #8b5cf6;
+  /* Violet 500 */
+  --color-dark: #0f172a;
+  /* Slate 900 */
+  --color-darker: #020617;
+  /* Slate 950 */
+  --color-card: rgba(30, 41, 59, 0.7);
+  /* Slate 800 with opacity */
 }
 
 @layer base {
@@ -19,10 +24,18 @@
   .text-glow {
     text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
   }
+
   .card-glow:hover {
     box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
   }
+
   .glass {
     @apply bg-card backdrop-blur-md border border-slate-700/50;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
   }
 }
