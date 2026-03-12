@@ -40,7 +40,7 @@ export default function DashboardPage() {
             {!data.quick_assessment_done && (
                 <div id="assessment-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:opacity-90"
                     style={{ background: 'linear-gradient(135deg, rgba(251,146,60,0.15), rgba(234,88,12,0.1))', border: '1px solid rgba(251,146,60,0.3)' }}
-                    onClick={() => navigate('/coming-soon')}>
+                    onClick={() => navigate('/assessment')}>
                     <div className="flex items-center gap-3">
                         <Zap size={20} style={{ color: '#fb923c' }} />
                         <div>
@@ -55,7 +55,7 @@ export default function DashboardPage() {
             {!data.gap_analysis_done && (
                 <div id="gap-analysis-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:opacity-90"
                     style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(99,102,241,0.3)' }}
-                    onClick={() => navigate('/coming-soon')}>
+                    onClick={() => navigate('/gap-analysis')}>
                     <div className="flex items-center gap-3">
                         <BarChart3 size={20} style={{ color: '#818cf8' }} />
                         <div>

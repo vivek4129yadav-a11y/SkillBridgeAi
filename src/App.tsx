@@ -8,6 +8,9 @@ import ProfilePage from '@/modules/profile/ProfilePage'
 import JobsPage from '@/modules/jobs/JobsPage'
 import AdminPage from '@/modules/admin/AdminPage'
 import AppLayout from '@/components/layout/AppLayout'
+import { AssessmentPage } from '@/modules/assessment/AssessmentPage'
+import { GapAnalysisPage } from '@/modules/gap_analysis/GapAnalysisPage'
+import { ResourcesAdmin } from '@/modules/admin/ResourcesAdmin'
 
 // Simple guard — redirect to /auth if not logged in
 function Protected({ children }: { children: React.ReactNode }) {
@@ -28,10 +31,14 @@ export default function App() {
                     <Protected><ProcessingPage /></Protected>
                 } />
 
+                <Route path="/admin/resources" element={<ResourcesAdmin />} />
+
                 {/* Authenticated pages — wrapped in AppLayout (sidebar + topbar) */}
                 <Route path="/" element={<Protected><AppLayout /></Protected>}>
                     <Route index element={<Navigate to="/dashboard" replace />} />
                     <Route path="dashboard" element={<DashboardPage />} />
+                    <Route path="assessment" element={<AssessmentPage />} />
+                    <Route path="gap-analysis" element={<GapAnalysisPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="jobs" element={<JobsPage />} />
                     <Route path="admin" element={<AdminPage />} />
