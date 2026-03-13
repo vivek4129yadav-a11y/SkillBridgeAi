@@ -11,6 +11,7 @@ import AppLayout from '@/components/layout/AppLayout'
 import { AssessmentPage } from '@/modules/assessment/AssessmentPage'
 import { GapAnalysisPage } from '@/modules/gap_analysis/GapAnalysisPage'
 import { ResourcesAdmin } from '@/modules/admin/ResourcesAdmin'
+import ResumeAnalysisPage from '@/pages/ResumeAnalysisPage'
 
 // Simple guard — redirect to /auth if not logged in
 function Protected({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,7 @@ export default function App() {
                     <Route path="dashboard" element={<DashboardPage />} />
                     <Route path="assessment" element={<AssessmentPage />} />
                     <Route path="gap-analysis" element={<GapAnalysisPage />} />
+                    <Route path="resume-analysis" element={<ResumeAnalysisPage />} />
                     <Route path="profile" element={<ProfilePage />} />
                     <Route path="jobs" element={<JobsPage />} />
                     <Route path="admin" element={<AdminPage />} />

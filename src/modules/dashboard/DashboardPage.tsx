@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, Zap, BarChart3, Briefcase, CheckCircle2 } from 'lucide-react'
 import api from '@/lib/api'
 import { DashboardData } from '@/types'
+import ResumeScoreWidget from '@/components/resume/ResumeScoreWidget'
 
 function useDashboard() {
     return useQuery<DashboardData>({
@@ -117,6 +118,11 @@ export default function DashboardPage() {
                     {data.location.state && (
                         <p className="text-xs mt-4" style={{ color: 'hsl(220 15% 45%)' }}>📍 {data.location.city}, {data.location.state}</p>
                     )}
+                </div>
+
+                {/* Resume Analysis Widget */}
+                <div className="md:col-span-3">
+                    <ResumeScoreWidget />
                 </div>
             </div>
 
