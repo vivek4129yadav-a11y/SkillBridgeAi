@@ -82,4 +82,14 @@
   .nav-link:hover { background: hsl(var(--surface-elevated)); color: hsl(var(--text)); }
   .nav-link.active { background: hsl(var(--surface-elevated)); color: white; }
   .nav-link.active svg { color: #6366f1; }
+
+  /* Chat Markdown Styles */
+  .chat-markdown p { margin-bottom: 0.5rem; }
+  .chat-markdown p:last-child { margin-bottom: 0; }
+  .chat-markdown strong { font-weight: 700; color: white; }
+  .chat-markdown em { font-style: italic; opacity: 0.9; }
+  .chat-markdown ul, .chat-markdown ol { margin: 0.5rem 0; padding-left: 1.25rem; }
+  .chat-markdown li { margin-bottom: 0.25rem; list-style: disc; }
+  .chat-markdown ol li { list-style: decimal; }
+  .chat-markdown code { background: rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace; }
 }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import { useAuthStore } from '@/store/authStore'
 
 interface Message {
@@ -60,6 +61,14 @@ export default function ChatWidget() {
                     if (!line.startsWith('data: ')) continue
                     const data = JSON.parse(line.slice(6))
                     if (data.done) break
+                    if (data.error) {
+                        setMessages(prev => {
+                            const copy = [...prev]
+                            copy[copy.length - 1] = { role: 'assistant', content: data.error }
+                            return copy
+                        })
+                        break
+                    }
                     if (data.token) {
                         setMessages(prev => {
                             const copy = [...prev]
@@ -120,11 +129,13 @@ export default function ChatWidget() {
                         )}
                         {messages.map((m, i) => (
                             <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed ${m.role === 'user' ? 'text-white' : ''}`}
+                                <div className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed ${m.role === 'user' ? 'text-white' : ''} chat-markdown`}
                                     style={m.role === 'user'
                                         ? { background: '#6366f1' }
                                         : { background: 'hsl(222 47% 16%)', color: 'hsl(220 20% 85%)' }}>
-                                    {m.content || (streaming && i === messages.length - 1 ? '●' : '')}
+                                    <ReactMarkdown>
+                                        {m.content || (streaming && i === messages.length - 1 ? '●' : '')}
+                                    </ReactMarkdown>
                                 </div>
                             </div>
                         ))}
