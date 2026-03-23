@@ -1,9 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { AlertTriangle, Zap, BarChart3, Briefcase, CheckCircle2 } from 'lucide-react'
+import { AlertTriangle, Zap, BarChart3, Brain } from 'lucide-react'
 import api from '@/lib/api'
 import { DashboardData } from '@/types'
 import ResumeScoreWidget from '@/components/resume/ResumeScoreWidget'
+import RecommendationsWidget from './widgets/RecommendationsWidget'
+import CareerIdentityCard from './widgets/CareerIdentityCard'
+import SkillGapWidget from './widgets/SkillGapWidget'
 
 function useDashboard() {
     return useQuery<DashboardData>({
@@ -21,8 +24,12 @@ export default function DashboardPage() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="space-y-6 animate-pulse">
+                <div className="h-10 w-64 bg-white/5 rounded-lg" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[1, 2, 3].map(i => <div key={i} className="h-48 bg-white/5 rounded-2xl" />)}
+                </div>
+                <div className="h-48 bg-white/5 rounded-2xl" />
             </div>
         )
     }
@@ -68,7 +75,13 @@ export default function DashboardPage() {
                 </div>
             )}
 
+            {/* Row 1: Career Identity + Profile Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Career Identity — spans 2 cols */}
+                <div className="md:col-span-2">
+                    <CareerIdentityCard />
+                </div>
+
                 {/* Profile Completion */}
                 <div className="card p-6">
                     <p className="text-sm font-medium mb-4" style={{ color: 'hsl(220 15% 55%)' }}>Profile Completion</p>
@@ -85,10 +98,18 @@ export default function DashboardPage() {
                                 <span className="text-xl font-bold text-white">{data.profile_completion_pct}%</span>
                             </div>
                         </div>
-                        <p className="text-xs mt-3" style={{ color: 'hsl(220 15% 55%)' }}>
+                        <p className="text-xs mt-3 text-center" style={{ color: 'hsl(220 15% 55%)' }}>
                             {data.profile_completion_pct < 100 ? 'Complete your profile for better matches' : 'Profile complete!'}
                         </p>
                     </div>
+                </div>
+            </div>
+
+            {/* Row 2: Skill Gap + Skills + Career Paths */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Skill Gap widget */}
+                <div className="md:col-span-2">
+                    <SkillGapWidget />
                 </div>
 
                 {/* Extracted Skills */}
@@ -102,61 +123,27 @@ export default function DashboardPage() {
                             : <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>Complete the assessment to extract skills.</p>
                         }
                     </div>
-                </div>
-
-                {/* Career Interests */}
-                <div className="card p-6">
-                    <p className="text-sm font-medium mb-4" style={{ color: 'hsl(220 15% 55%)' }}>Career Paths</p>
-                    <div id="career-paths" className="flex flex-wrap gap-2">
-                        {data.career_interests.length > 0
-                            ? data.career_interests.map(interest => (
-                                <span key={interest} className="badge capitalize">{interest}</span>
-                            ))
-                            : <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>Set your preferences to see paths.</p>
-                        }
-                    </div>
+                    {data.career_interests.length > 0 && (
+                        <>
+                            <p className="text-sm font-medium mb-2 mt-4" style={{ color: 'hsl(220 15% 55%)' }}>Career Paths</p>
+                            <div id="career-paths" className="flex flex-wrap gap-2">
+                                {data.career_interests.map(interest => (
+                                    <span key={interest} className="badge capitalize">{interest}</span>
+                                ))}
+                            </div>
+                        </>
+                    )}
                     {data.location.state && (
                         <p className="text-xs mt-4" style={{ color: 'hsl(220 15% 45%)' }}>📍 {data.location.city}, {data.location.state}</p>
                     )}
                 </div>
-
-                {/* Resume Analysis Widget */}
-                <div className="md:col-span-3">
-                    <ResumeScoreWidget />
-                </div>
             </div>
 
-            {/* Job Matches */}
-            <div>
-                <h3 className="text-lg font-semibold text-white mb-4">
-                    <Briefcase size={18} className="inline mr-2" style={{ color: '#818cf8' }} />
-                    Top Job Matches
-                </h3>
-                <div id="job-matches" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {data.job_matches.length > 0 ? data.job_matches.map((job, i) => (
-                        <div key={job.id || i} className="card p-5 space-y-3 hover:border-indigo-500/40 transition-all">
-                            <div>
-                                <p className="font-semibold text-white text-sm">{job.title}</p>
-                                <p className="text-xs mt-0.5" style={{ color: 'hsl(220 15% 55%)' }}>{job.company}</p>
-                            </div>
-                            {job.location_city && <p className="text-xs" style={{ color: 'hsl(220 15% 50%)' }}>📍 {job.location_city}</p>}
-                            {job.salary_min && (
-                                <p className="text-xs font-medium" style={{ color: '#4ade80' }}>
-                                    ₹{job.salary_min?.toLocaleString()} – ₹{job.salary_max?.toLocaleString()}/mo
-                                </p>
-                            )}
-                            {(job.required_skills || []).slice(0, 3).map(s => (
-                                <span key={s} className="badge mr-1 text-xs" style={{ fontSize: '10px' }}>{s}</span>
-                            ))}
-                            <button onClick={() => navigate('/jobs')} className="btn-ghost w-full text-xs mt-2">View Job →</button>
-                        </div>
-                    )) : (
-                        <div className="col-span-3 text-center py-8 text-sm" style={{ color: 'hsl(220 15% 45%)' }}>
-                            Complete onboarding to see personalized job matches.
-                        </div>
-                    )}
-                </div>
-            </div>
+            {/* Resume Analysis Widget */}
+            <ResumeScoreWidget />
+
+            {/* AI Recommendations */}
+            <RecommendationsWidget />
         </div>
     )
 }

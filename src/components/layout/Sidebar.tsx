@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, User, Briefcase, LogOut, Zap, ClipboardList, BarChart2 } from 'lucide-react'
+import { LayoutDashboard, User, Briefcase, LogOut, Zap, ClipboardList, BarChart2, ShieldCheck, Mic } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 
 const nav = [
     { to: '/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
     { to: '/assessment', icon: <ClipboardList size={18} />, label: 'My Assessment' },
     { to: '/gap-analysis', icon: <BarChart2 size={18} />, label: 'Gap Analysis' },
+    { to: '/government-dashboard', icon: <ShieldCheck size={18} />, label: 'Govt. Insights' },
     { to: '/profile', icon: <User size={18} />, label: 'Profile' },
     { to: '/jobs', icon: <Briefcase size={18} />, label: 'Jobs' },
+    { to: '/interview', icon: <Mic size={18} />, label: 'Mock Interview' },
 ]
 
 export default function Sidebar() {

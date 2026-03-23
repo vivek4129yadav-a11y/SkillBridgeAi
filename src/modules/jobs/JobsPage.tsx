@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Search, MapPin, Briefcase } from 'lucide-react'
 import api from '@/lib/api'
 import { Job } from '@/types'
+import JobCard from './components/JobCard'
 
 export default function JobsPage() {
     const [stateFilter, setStateFilter] = useState('')
@@ -41,28 +41,7 @@ export default function JobsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {jobs.map(job => (
-                    <div key={job.id} id={`job-card-${job.id}`} className="card p-5 space-y-3 hover:border-indigo-500/40 transition-all">
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <h3 className="font-semibold text-white">{job.title}</h3>
-                                <p className="text-sm mt-0.5" style={{ color: 'hsl(220 15% 55%)' }}>{job.company}</p>
-                            </div>
-                            <span className="badge text-xs capitalize">{job.job_type?.replace('_', ' ')}</span>
-                        </div>
-                        <div className="flex items-center gap-4 text-xs" style={{ color: 'hsl(220 15% 50%)' }}>
-                            <span className="flex items-center gap-1"><MapPin size={12} /> {job.location_city}, {job.location_state}</span>
-                            {job.work_mode && <span className="flex items-center gap-1"><Briefcase size={12} /> {job.work_mode}</span>}
-                        </div>
-                        {job.salary_min && (
-                            <p className="text-sm font-medium" style={{ color: '#4ade80' }}>
-                                ₹{job.salary_min.toLocaleString()} – ₹{(job.salary_max || 0).toLocaleString()}/month
-                            </p>
-                        )}
-                        <div className="flex flex-wrap gap-1">
-                            {(job.required_skills || []).slice(0, 4).map(s => <span key={s} className="badge text-xs">{s}</span>)}
-                        </div>
-                        {job.description && <p className="text-xs line-clamp-2" style={{ color: 'hsl(220 15% 50%)' }}>{job.description}</p>}
-                    </div>
+                    <JobCard key={job.id} job={job} />
                 ))}
                 {!isLoading && jobs.length === 0 && (
                     <div className="col-span-2 text-center py-16 text-sm" style={{ color: 'hsl(220 15% 45%)' }}>

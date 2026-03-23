@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useAuthStore } from '@/store/authStore'
+import { useLanguage } from '@/hooks/useLanguage'
 
 interface Message {
     role: 'user' | 'assistant'
@@ -10,7 +11,7 @@ interface Message {
 
 export default function ChatWidget() {
     const [open, setOpen] = useState(false)
-    const [lang, setLang] = useState<'en' | 'hi'>('en')
+    const { language, t } = useLanguage()
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [streaming, setStreaming] = useState(false)
@@ -21,11 +22,10 @@ export default function ChatWidget() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    // Switching language clears context
-    function toggleLang(newLang: 'en' | 'hi') {
-        setLang(newLang)
+    // Clear messages when language changes to reset context
+    useEffect(() => {
         setMessages([])
-    }
+    }, [language])
 
     async function sendMessage() {
         if (!input.trim() || streaming) return
@@ -43,7 +43,7 @@ export default function ChatWidget() {
             const resp = await fetch(`${apiBase}/chat/message`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
-                body: JSON.stringify({ content: userMsg, language: lang }),
+                body: JSON.stringify({ content: userMsg, language }),
             })
 
             const reader = resp.body!.getReader()
@@ -108,23 +108,13 @@ export default function ChatWidget() {
                                 <p className="text-xs" style={{ color: '#4ade80' }}>● Online</p>
                             </div>
                         </div>
-                        {/* Language toggle */}
-                        <div id="chat-lang-toggle" className="flex rounded-lg overflow-hidden border" style={{ borderColor: 'hsl(222 30% 22%)' }}>
-                            {(['en', 'hi'] as const).map(l => (
-                                <button key={l} onClick={() => toggleLang(l)}
-                                    className="px-3 py-1 text-xs font-medium transition-all"
-                                    style={lang === l ? { background: '#6366f1', color: 'white' } : { background: 'transparent', color: 'hsl(220 15% 55%)' }}>
-                                    {l === 'en' ? 'EN' : 'हि'}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {messages.length === 0 && (
                             <div className="text-center py-8 text-sm" style={{ color: 'hsl(220 15% 45%)' }}>
-                                {lang === 'en' ? 'Ask me anything about careers, skills, or jobs!' : 'करियर, कौशल या नौकरी के बारे में कुछ भी पूछें!'}
+                                {t('chatPlaceholder')}
                             </div>
                         )}
                         {messages.map((m, i) => (
@@ -144,7 +134,7 @@ export default function ChatWidget() {
 
                     {/* Input */}
                     <div className="flex gap-2 p-3 border-t" style={{ borderColor: 'hsl(222 30% 18%)' }}>
-                        <input id="chat-input" className="input-field flex-1 text-sm py-2.5" placeholder={lang === 'en' ? 'Type a message...' : 'संदेश लिखें...'}
+                        <input id="chat-input" className="input-field flex-1 text-sm py-2.5" placeholder={t('typeMessage')}
                             value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()} disabled={streaming} />
                         <button id="chat-send-btn" onClick={sendMessage} disabled={streaming || !input.trim()}
                             className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80 disabled:opacity-40"

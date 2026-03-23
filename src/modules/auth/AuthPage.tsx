@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import LoginForm from './LoginForm'
 import OTPVerifyForm from './OTPVerifyForm'
+import DemoLoginBar from '@/components/auth/DemoLoginBar'
 
 export default function AuthPage() {
     const [step, setStep] = useState<'login' | 'verify'>('login')
@@ -30,6 +31,7 @@ export default function AuthPage() {
                     ) : (
                         <OTPVerifyForm email={email} onBack={() => setStep('login')} />
                     )}
+                    <DemoLoginBar />
                 </div>
             </div>
         </div>
