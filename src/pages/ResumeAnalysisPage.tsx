@@ -130,7 +130,7 @@ const ResumeAnalysisPage: React.FC = () => {
 
             {/* Content Area */}
             <main className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                {activeTab === 'score' && <ScoreDashboard qualityScores={data.quality_scores} />}
+                {activeTab === 'score' && <ScoreDashboard qualityScores={data.quality_scores} targetRoles={data.target_roles} />}
                 {activeTab === 'suggestions' && <SuggestionCards suggestions={data.suggestions} />}
                 {activeTab === 'profile' && <ExtractedProfile structuredProfile={data.structured_profile} />}
             </main>

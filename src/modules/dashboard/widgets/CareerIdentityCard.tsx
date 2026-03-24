@@ -1,6 +1,6 @@
 /**
  * CareerIdentityCard — Shows the AI-generated career identity snapshot.
- * Uses /recommendations/career-identity endpoint.
+ * Uses /api/v1/recommendations/identity endpoint.
  */
 import { useQuery } from '@tanstack/react-query'
 import { Brain, TrendingUp, Sparkles } from 'lucide-react'
@@ -18,7 +18,7 @@ function useCareerIdentity() {
     return useQuery<CareerIdentity>({
         queryKey: ['career-identity'],
         queryFn: async () => {
-            const { data } = await api.get('/recommendations/career-identity')
+            const { data } = await api.get('/api/v1/recommendations/identity')
             return data.data
         },
         retry: 1,

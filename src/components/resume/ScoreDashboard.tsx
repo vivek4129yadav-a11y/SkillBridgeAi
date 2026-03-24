@@ -12,11 +12,27 @@ interface QualityScores {
 
 interface ScoreDashboardProps {
     qualityScores: QualityScores
+    targetRoles?: string[]
 }
 
-const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores }) => {
+const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRoles = [] }) => {
     return (
         <div className="space-y-8 animate-fade-in">
+            {/* Target Roles Badge Display */}
+            {targetRoles.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Targeting:</span>
+                    {targetRoles.map((role, idx) => (
+                        <span 
+                            key={idx}
+                            className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100"
+                        >
+                            {role}
+                        </span>
+                    ))}
+                </div>
+            )}
+
             {/* Score Rings Grid */}
             <div className="grid grid-cols-2 md:flex md:justify-around gap-6 items-end">
                 <div className="order-1 md:order-none">

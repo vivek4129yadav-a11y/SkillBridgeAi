@@ -8,7 +8,8 @@ interface ResumeUploadProps {
 
 const ResumeUpload: React.FC<ResumeUploadProps> = ({ onAnalysisComplete }) => {
     const [file, setFile] = useState<File | null>(null)
-    const [targetRole, setTargetRole] = useState('')
+    const [targetRoles, setTargetRoles] = useState<string[]>([])
+    const [roleInput, setRoleInput] = useState('')
     const [isAnalyzing, setIsAnalyzing] = useState(false)
     const [analysisStep, setAnalysisStep] = useState(0)
     const [error, setError] = useState<string | null>(null)
@@ -51,7 +52,7 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({ onAnalysisComplete }) => {
         
         // Parallel run: stepper UX and actual backend call
         const [analysisResult] = await Promise.all([
-            resumeAnalysisService.uploadAndAnalyzeResume(file, targetRole),
+            resumeAnalysisService.uploadAndAnalyzeResume(file, targetRoles),
             runStepper()
         ])
 
@@ -113,17 +114,49 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({ onAnalysisComplete }) => {
                         </div>
                     </div>
 
-                    {/* Target Role Input */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Target Role (Optional)</label>
-                        <input 
-                            type="text" 
-                            value={targetRole}
-                            onChange={(e) => setTargetRole(e.target.value)}
-                            placeholder="e.g. Mechanical Engineer, Frontend Developer, Sales Manager"
-                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                        />
-                        <p className="text-[10px] text-slate-400 italic font-medium">Adding a role helps our AI check for relevant keywords.</p>
+                    {/* Target Roles Multi-Input */}
+                    <div className="space-y-3">
+                        <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                            Target Roles
+                            <span className="text-[10px] font-medium px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">New</span>
+                        </label>
+                        
+                        <div className="flex flex-wrap gap-2 p-2 min-h-[50px] bg-slate-50 border border-slate-200 rounded-xl focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                            {targetRoles.map((role, idx) => (
+                                <span 
+                                    key={idx} 
+                                    className="flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-sm font-bold rounded-lg animate-in zoom-in-95 duration-200"
+                                >
+                                    {role}
+                                    <button 
+                                        onClick={() => setTargetRoles(targetRoles.filter((_, i) => i !== idx))}
+                                        className="hover:text-blue-900"
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                </span>
+                            ))}
+                            <input 
+                                type="text" 
+                                value={roleInput}
+                                onChange={(e) => setRoleInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ',') {
+                                        e.preventDefault()
+                                        const trimmed = roleInput.trim()
+                                        if (trimmed && !targetRoles.includes(trimmed)) {
+                                            setTargetRoles([...targetRoles, trimmed])
+                                            setRoleInput('')
+                                        }
+                                    } else if (e.key === 'Backspace' && !roleInput && targetRoles.length > 0) {
+                                        setTargetRoles(targetRoles.slice(0, -1))
+                                    }
+                                }}
+                                placeholder={targetRoles.length === 0 ? "e.g. Mechanical Engineer, Frontend Developer" : "Add another..."}
+                                className="flex-1 bg-transparent border-none outline-none text-sm px-2 min-w-[150px]"
+                            />
+                        </div>
+                        <p className="text-[10px] text-slate-400 italic font-medium">Adding multiple roles helps our AI prioritize keywords across different career paths.</p>
                     </div>
 
                     {error && (

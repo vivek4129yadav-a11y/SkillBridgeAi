@@ -10,9 +10,10 @@ import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
 
 const PERSONAS = [
-    { id: 'ramesh', label: 'Ramesh', desc: 'Rural Tech Aspirant', emoji: '👨‍💻' },
-    { id: 'priya', label: 'Priya', desc: 'Healthcare Pro', emoji: '👩‍⚕️' },
-    { id: 'officer', label: 'Officer', desc: 'Govt. Evaluator', emoji: '🏛️' },
+    { id: 'ravi', label: 'Ravi', desc: 'Rural Tech', emoji: '🧑‍🌾' },
+    { id: 'meera', label: 'Meera', desc: 'SHG Leader', emoji: '👩‍👩‍👧‍👦' },
+    { id: 'arjun', label: 'Arjun', desc: 'MSME Owner', emoji: '🏢' },
+    { id: 'admin', label: 'Admin', desc: 'System Admin', emoji: '🛡️' },
 ]
 
 interface DemoLoginBarProps {
@@ -31,8 +32,8 @@ export default function DemoLoginBar({ onLogin }: DemoLoginBarProps) {
         setLoading(persona)
         setError('')
         try {
-            const { data } = await api.post('/api/demo/login', { persona })
-            setAuth(data.data.access_token, { email: data.data.label, id: persona })
+            const { data } = await api.post('/api/v1/demo/login', { persona })
+            setAuth(data.data.access_token, data.data.user)
             onLogin?.()
             navigate('/dashboard')
         } catch (err: any) {
@@ -57,7 +58,7 @@ export default function DemoLoginBar({ onLogin }: DemoLoginBarProps) {
                 Judge / Demo Access — skip OTP
             </p>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
                 {PERSONAS.map(p => (
                     <button
                         key={p.id}

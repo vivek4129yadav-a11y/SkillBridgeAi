@@ -1,6 +1,6 @@
 /**
  * SkillGapWidget — Shows skill gap data as circular progress rings.
- * Uses the gap analysis data from /gap-analysis/ endpoint.
+ * Uses the gap analysis data from /gap-analysis/report endpoint.
  */
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3 } from 'lucide-react'
@@ -25,7 +25,7 @@ function useGapAnalysis() {
     return useQuery<GapAnalysis>({
         queryKey: ['gap-analysis-summary'],
         queryFn: async () => {
-            const { data } = await api.get('/gap-analysis/')
+            const { data } = await api.get('/gap-analysis/report')
             return data.data
         },
         retry: 1,

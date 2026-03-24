@@ -10,7 +10,8 @@ import resumeAnalysisService from '@/services/resumeAnalysisService'
 
 const BulletImprover: React.FC = () => {
     const [bullet, setBullet] = useState('')
-    const [targetRole, setTargetRole] = useState('')
+    const [targetRoles, setTargetRoles] = useState<string[]>([])
+    const [roleInput, setRoleInput] = useState('')
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<any>(null)
     const [error, setError] = useState<string | null>(null)
@@ -23,7 +24,7 @@ const BulletImprover: React.FC = () => {
         setResult(null)
         setError(null)
         
-        const { data, error } = await resumeAnalysisService.improveBullet(bullet, targetRole)
+        const { data, error } = await resumeAnalysisService.improveBullet(bullet, targetRoles)
         
         if (data) {
             setResult(data)
@@ -61,12 +62,15 @@ const BulletImprover: React.FC = () => {
 
                 <div className="flex flex-col md:flex-row gap-4 items-end">
                     <div className="flex-1 space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Role (Optional)</label>
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Target Roles (Optional, comma-separated)</label>
                         <input 
                             type="text" 
-                            value={targetRole}
-                            onChange={(e) => setTargetRole(e.target.value)}
-                            placeholder="e.g. Shift Supervisor"
+                            value={roleInput}
+                            onChange={(e) => {
+                                setRoleInput(e.target.value)
+                                setTargetRoles(e.target.value.split(',').map(r => r.trim()).filter(Boolean))
+                            }}
+                            placeholder="e.g. Shift Supervisor, Manager"
                             className="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                         />
                     </div>

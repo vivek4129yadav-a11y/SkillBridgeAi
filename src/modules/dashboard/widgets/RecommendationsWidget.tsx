@@ -9,7 +9,7 @@ export default function RecommendationsWidget() {
     const { data: recommendations = [], isLoading } = useQuery<(Job & { affinity_score: number })[]>({
         queryKey: ['job-recommendations'],
         queryFn: async () => {
-            const { data } = await api.get('/recommendations/')
+            const { data } = await api.get('/api/v1/recommendations/jobs')
             return data.data
         },
     })
