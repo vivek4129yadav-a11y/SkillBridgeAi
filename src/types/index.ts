@@ -90,6 +90,20 @@ export interface DashboardData {
     career_interests: string[]
     location: { state: string | null; city: string | null }
     job_matches: Partial<Job>[]
+    recommended_courses?: any[]
+    role_specific?: {
+        variant: string
+        career_pathways?: any[]
+        competitive_exams?: any[]
+        internships?: any[]
+        trade_pulse?: any
+        apprenticeships?: any[]
+        trade_tips?: string
+        micro_biz_ideas?: string[]
+        govt_schemes?: any[]
+        digital_tips?: string[]
+    }
+    ai_highlight?: string
 }
 
 // --- API wrapper ---

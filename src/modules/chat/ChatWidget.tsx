@@ -40,9 +40,14 @@ export default function ChatWidget() {
         const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
         try {
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+            if (accessToken && accessToken !== 'undefined' && accessToken !== 'null') {
+                headers['Authorization'] = `Bearer ${accessToken}`
+            }
+
             const resp = await fetch(`${apiBase}/chat/message`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+                headers,
                 body: JSON.stringify({ content: userMsg, language: lang }),
             })
 

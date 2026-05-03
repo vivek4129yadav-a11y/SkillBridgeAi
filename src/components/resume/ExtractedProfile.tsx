@@ -28,6 +28,13 @@ interface Experience {
     duration_months: number
 }
 
+interface Education {
+    degree: string
+    institution: string
+    year: string
+    is_vocational?: boolean
+}
+
 interface StructuredProfile {
     skills: Skill[]
     experiences: Experience[]

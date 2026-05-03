@@ -12,7 +12,9 @@ const api = axios.create({
 // Attach access token to every request
 api.interceptors.request.use((config) => {
     const token = useAuthStore.getState().accessToken
-    if (token) config.headers.Authorization = `Bearer ${token}`
+    if (token && token !== 'undefined' && token !== 'null') {
+        config.headers.Authorization = `Bearer ${token}`
+    }
     return config
 })
 

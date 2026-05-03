@@ -16,7 +16,12 @@ export default function ProfilePage() {
 
     const [editMode, setEditMode] = useState(false)
     const [form, setForm] = useState<Record<string, string>>({})
-    const [uploadResult, setUploadResult] = useState<{ skills_found: string[] } | null>(null)
+    const [uploadResult, setUploadResult] = useState<{ 
+        skills_found: Array<{ name: string, proficiency_label?: string }>,
+        strengths?: string[],
+        weaknesses?: string[],
+        career_suggestions?: string[]
+    } | null>(null)
     const [uploading, setUploading] = useState(false)
 
     const updateProfile = useMutation({
@@ -38,6 +43,8 @@ export default function ProfilePage() {
         try {
             const { data } = await api.post('/profile/resume', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
             setUploadResult(data.data)
+            qc.invalidateQueries({ queryKey: ['profile'] })
+            qc.invalidateQueries({ queryKey: ['completion'] })
         } catch (err) {
             console.error('[PROFILE] resume upload failed', err)
         } finally {
@@ -119,11 +126,36 @@ export default function ProfilePage() {
                     <div className="mt-4">
                         <p className="text-sm font-medium text-white mb-2 flex items-center gap-1"><Star size={14} style={{ color: '#fbbf24' }} /> Skills extracted:</p>
                         <div className="flex flex-wrap gap-2" id="parsed-skills">
-                            {uploadResult.skills_found.map(s => (
-                                <span key={s} className="badge" style={{ background: 'rgba(74,222,128,0.1)', color: '#4ade80', border: '1px solid rgba(74,222,128,0.2)' }}>{s}</span>
+                            {uploadResult.skills_found.map((s, idx) => (
+                                <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:scale-105"
+                                    style={{ background: 'rgba(99,102,241,0.1)', color: '#818cf8', borderColor: 'rgba(99,102,241,0.2)' }}>
+                                    <span className="text-sm font-bold">{s.name}</span>
+                                    {s.proficiency_label && (
+                                        <span className="text-[10px] uppercase font-black opacity-60 bg-white/10 px-1 rounded">
+                                            {s.proficiency_label.substring(0, 3)}
+                                        </span>
+                                    )}
+                                </div>
                             ))}
                             {uploadResult.skills_found.length === 0 && <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>No skills detected. Try a text-based PDF.</p>}
                         </div>
+                        
+                        {(uploadResult.strengths?.length || 0) > 0 && (
+                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                                    <p className="text-[10px] font-bold text-emerald-400 uppercase mb-1">Strengths</p>
+                                    <ul className="text-xs text-gray-400 space-y-1">
+                                        {uploadResult.strengths?.slice(0, 3).map((st, i) => <li key={i}>• {st}</li>)}
+                                    </ul>
+                                </div>
+                                <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                                    <p className="text-[10px] font-bold text-amber-400 uppercase mb-1">Career Tip</p>
+                                    <p className="text-xs text-gray-400 italic">
+                                        {uploadResult.career_suggestions?.[0] || "Consider upskilling in high-demand areas."}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
