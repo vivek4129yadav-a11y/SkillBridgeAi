@@ -50,7 +50,7 @@ const StudentOnboarding = () => {
     stream: 'Science',
     college_name: '',
     career_interests: [],
-    preferred_location: 'same city',
+    preferred_location: 'Anywhere',
     languages: []
   });
 
@@ -308,7 +308,7 @@ const StudentOnboarding = () => {
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-4 ml-1">Preferred Work Region</label>
                 <div className="flex p-1.5 bg-slate-100 rounded-2xl">
-                  {['same city', 'same state', 'anywhere'].map(loc => (
+                  {['Same City', 'State', 'Anywhere'].map(loc => (
                     <button
                       key={loc}
                       type="button"

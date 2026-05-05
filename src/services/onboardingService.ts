@@ -100,13 +100,13 @@ export const onboardingService = {
       languages_known: data.languages
     };
     
-    // Using step=4 to indicate final step for student onboarding
-    const response = await api.post(`/onboarding/student?step=4`, backendData);
-    
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    // Using step=5 to indicate completion of the 5-step process
+    const response = await api.post(`/onboarding/student?step=5`, backendData);
+    if (response.data?.success) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
     return response.data;
