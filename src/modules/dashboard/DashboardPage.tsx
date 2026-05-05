@@ -4,6 +4,8 @@ import { AlertTriangle, Zap, BarChart3, Briefcase, CheckCircle2, Sparkles, Trend
 import api from '@/lib/api'
 import { DashboardData } from '@/types'
 import ResumeScoreWidget from '@/components/resume/ResumeScoreWidget'
+import { useAuthStore } from '@/store/authStore'
+import { SEEKER_ROLES, isSeeker } from '@/constants/roles'
 
 function useDashboard() {
     return useQuery<DashboardData>({
@@ -18,6 +20,9 @@ function useDashboard() {
 export default function DashboardPage() {
     const { data, isLoading } = useDashboard()
     const navigate = useNavigate()
+    const user = useAuthStore(s => s.user)
+    const isSeekerRole = isSeeker(user?.user_type)
+    console.log('[DASHBOARD] User Role:', user?.user_type, 'Is Seeker:', isSeekerRole)
 
     if (isLoading) {
         return (
@@ -46,41 +51,43 @@ export default function DashboardPage() {
             </div>
 
             {/* CTA Banners */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {!data.quick_assessment_done && (
-                    <div id="assessment-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99]"
-                        style={{ background: 'linear-gradient(135deg, rgba(251,146,60,0.15), rgba(234,88,12,0.1))', border: '1px solid rgba(251,146,60,0.3)' }}
-                        onClick={() => navigate('/assessment')}>
-                        <div className="flex items-center gap-4">
-                            <div className="p-2.5 rounded-xl bg-orange-500/20 text-orange-400">
-                                <Zap size={20} />
+            {isSeekerRole && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {!data.quick_assessment_done && (
+                        <div id="assessment-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99]"
+                            style={{ background: 'linear-gradient(135deg, rgba(251,146,60,0.15), rgba(234,88,12,0.1))', border: '1px solid rgba(251,146,60,0.3)' }}
+                            onClick={() => navigate('/assessment')}>
+                            <div className="flex items-center gap-4">
+                                <div className="p-2.5 rounded-xl bg-orange-500/20 text-orange-400">
+                                    <Zap size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-white text-sm">Complete your Quick Assessment</p>
+                                    <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Takes 5 minutes — improves your job matches significantly.</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="font-semibold text-white text-sm">Complete your Quick Assessment</p>
-                                <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Takes 5 minutes — improves your job matches significantly.</p>
-                            </div>
+                            <ChevronRight size={18} className="text-orange-400" />
                         </div>
-                        <ChevronRight size={18} className="text-orange-400" />
-                    </div>
-                )}
+                    )}
 
-                {!data.gap_analysis_done && (
-                    <div id="gap-analysis-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99]"
-                        style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(99,102,241,0.3)' }}
-                        onClick={() => navigate('/gap-analysis')}>
-                        <div className="flex items-center gap-4">
-                            <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-400">
-                                <BarChart3 size={20} />
+                    {!data.gap_analysis_done && (
+                        <div id="gap-analysis-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99]"
+                            style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(99,102,241,0.3)' }}
+                            onClick={() => navigate('/gap-analysis')}>
+                            <div className="flex items-center gap-4">
+                                <div className="p-2.5 rounded-xl bg-indigo-500/20 text-indigo-400">
+                                    <BarChart3 size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-white text-sm">Run Your Skill Gap Analysis</p>
+                                    <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Find exactly what skills you need for your target roles.</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="font-semibold text-white text-sm">Run Your Skill Gap Analysis</p>
-                                <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Find exactly what skills you need for your target roles.</p>
-                            </div>
+                            <ChevronRight size={18} className="text-indigo-400" />
                         </div>
-                        <ChevronRight size={18} className="text-indigo-400" />
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Profile Completion */}
@@ -266,9 +273,11 @@ export default function DashboardPage() {
             )}
 
             {/* Resume Analysis Widget (Full Width) */}
-            <div className="w-full">
-                <ResumeScoreWidget />
-            </div>
+            {isSeekerRole && (
+                <div className="w-full">
+                    <ResumeScoreWidget />
+                </div>
+            )}
 
             {/* Job Matches */}
             <div>

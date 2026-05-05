@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { User, Upload, Star } from 'lucide-react'
+import { User as UserIcon, Upload, Star } from 'lucide-react'
 import api from '@/lib/api'
+import { useAuthStore } from '@/store/authStore'
+import { SEEKER_ROLES, isSeeker } from '@/constants/roles'
 
 export default function ProfilePage() {
     const qc = useQueryClient()
+    const user = useAuthStore(s => s.user)
+    const isSeekerRole = isSeeker(user?.user_type)
+    console.log('[PROFILE] User Role:', user?.user_type, 'Is Seeker:', isSeekerRole)
+
     const { data: profile, isLoading } = useQuery({
         queryKey: ['profile'],
         queryFn: async () => (await api.get('/profile/me')).data.data,
@@ -61,7 +67,7 @@ export default function ProfilePage() {
                 <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                            <User size={24} className="text-white" />
+                            <UserIcon size={24} className="text-white" />
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-white">{profile?.full_name || 'Your Profile'}</h2>
@@ -108,57 +114,59 @@ export default function ProfilePage() {
                 )}
             </div>
 
-            {/* Resume Upload */}
-            <div className="card p-6">
-                <h3 className="font-semibold text-white mb-1 flex items-center gap-2"><Upload size={16} style={{ color: '#818cf8' }} /> Resume Upload</h3>
-                <p className="text-sm mb-4" style={{ color: 'hsl(220 15% 55%)' }}>Upload your PDF resume to auto-extract skills.</p>
-                <label id="resume-upload-area" className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-all hover:border-indigo-500"
-                    style={{ borderColor: 'hsl(222 30% 22%)' }}>
-                    <Upload size={24} style={{ color: 'hsl(220 15% 40%)' }} className="mb-2" />
-                    <p className="text-sm text-white">Click to upload PDF</p>
-                    <p className="text-xs mt-1" style={{ color: 'hsl(220 15% 45%)' }}>Max 5MB</p>
-                    <input type="file" accept=".pdf" className="sr-only" onChange={handleResumeUpload} disabled={uploading} />
-                </label>
+            {/* Resume Upload - Seeker Only */}
+            {isSeekerRole && (
+                <div className="card p-6">
+                    <h3 className="font-semibold text-white mb-1 flex items-center gap-2"><Upload size={16} style={{ color: '#818cf8' }} /> Resume Upload</h3>
+                    <p className="text-sm mb-4" style={{ color: 'hsl(220 15% 55%)' }}>Upload your PDF resume to auto-extract skills.</p>
+                    <label id="resume-upload-area" className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-all hover:border-indigo-500"
+                        style={{ borderColor: 'hsl(222 30% 22%)' }}>
+                        <Upload size={24} style={{ color: 'hsl(220 15% 40%)' }} className="mb-2" />
+                        <p className="text-sm text-white">Click to upload PDF</p>
+                        <p className="text-xs mt-1" style={{ color: 'hsl(220 15% 45%)' }}>Max 5MB</p>
+                        <input type="file" accept=".pdf" className="sr-only" onChange={handleResumeUpload} disabled={uploading} />
+                    </label>
 
-                {uploading && <p className="text-sm text-center mt-3" style={{ color: '#818cf8' }}>Parsing resume...</p>}
+                    {uploading && <p className="text-sm text-center mt-3" style={{ color: '#818cf8' }}>Parsing resume...</p>}
 
-                {uploadResult && (
-                    <div className="mt-4">
-                        <p className="text-sm font-medium text-white mb-2 flex items-center gap-1"><Star size={14} style={{ color: '#fbbf24' }} /> Skills extracted:</p>
-                        <div className="flex flex-wrap gap-2" id="parsed-skills">
-                            {uploadResult.skills_found.map((s, idx) => (
-                                <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:scale-105"
-                                    style={{ background: 'rgba(99,102,241,0.1)', color: '#818cf8', borderColor: 'rgba(99,102,241,0.2)' }}>
-                                    <span className="text-sm font-bold">{s.name}</span>
-                                    {s.proficiency_label && (
-                                        <span className="text-[10px] uppercase font-black opacity-60 bg-white/10 px-1 rounded">
-                                            {s.proficiency_label.substring(0, 3)}
-                                        </span>
-                                    )}
-                                </div>
-                            ))}
-                            {uploadResult.skills_found.length === 0 && <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>No skills detected. Try a text-based PDF.</p>}
-                        </div>
-                        
-                        {(uploadResult.strengths?.length || 0) > 0 && (
-                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
-                                    <p className="text-[10px] font-bold text-emerald-400 uppercase mb-1">Strengths</p>
-                                    <ul className="text-xs text-gray-400 space-y-1">
-                                        {uploadResult.strengths?.slice(0, 3).map((st, i) => <li key={i}>• {st}</li>)}
-                                    </ul>
-                                </div>
-                                <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
-                                    <p className="text-[10px] font-bold text-amber-400 uppercase mb-1">Career Tip</p>
-                                    <p className="text-xs text-gray-400 italic">
-                                        {uploadResult.career_suggestions?.[0] || "Consider upskilling in high-demand areas."}
-                                    </p>
-                                </div>
+                    {uploadResult && (
+                        <div className="mt-4">
+                            <p className="text-sm font-medium text-white mb-2 flex items-center gap-1"><Star size={14} style={{ color: '#fbbf24' }} /> Skills extracted:</p>
+                            <div className="flex flex-wrap gap-2" id="parsed-skills">
+                                {uploadResult.skills_found.map((s, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:scale-105"
+                                        style={{ background: 'rgba(99,102,241,0.1)', color: '#818cf8', borderColor: 'rgba(99,102,241,0.2)' }}>
+                                        <span className="text-sm font-bold">{s.name}</span>
+                                        {s.proficiency_label && (
+                                            <span className="text-[10px] uppercase font-black opacity-60 bg-white/10 px-1 rounded">
+                                                {s.proficiency_label.substring(0, 3)}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
+                                {uploadResult.skills_found.length === 0 && <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>No skills detected. Try a text-based PDF.</p>}
                             </div>
-                        )}
-                    </div>
-                )}
-            </div>
+                            
+                            {(uploadResult.strengths?.length || 0) > 0 && (
+                                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                                        <p className="text-[10px] font-bold text-emerald-400 uppercase mb-1">Strengths</p>
+                                        <ul className="text-xs text-gray-400 space-y-1">
+                                            {uploadResult.strengths?.slice(0, 3).map((st, i) => <li key={i}>• {st}</li>)}
+                                        </ul>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                                        <p className="text-[10px] font-bold text-amber-400 uppercase mb-1">Career Tip</p>
+                                        <p className="text-xs text-gray-400 italic">
+                                            {uploadResult.career_suggestions?.[0] || "Consider upskilling in high-demand areas."}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }

@@ -73,13 +73,13 @@ const NGOOnboarding = () => {
 
     try {
       const submitData = {
-        organization_name: formData.org_name,
-        registration_number: formData.reg_number,
-        primary_focus_sectors: formData.focus_sectors,
-        operating_states: formData.coverage_areas,
-        beneficiary_demographic: formData.beneficiary_types,
-        contact_person_name: formData.contact_name,
-        official_designation: formData.contact_designation
+        org_name: formData.org_name,
+        reg_number: formData.reg_number,
+        focus_sectors: formData.focus_sectors.length > 0 ? formData.focus_sectors : ['Other'],
+        coverage_areas: formData.coverage_areas,
+        beneficiary_types: formData.beneficiary_types.length > 0 ? formData.beneficiary_types : ['All'],
+        contact_name: formData.contact_name,
+        contact_designation: formData.contact_designation
       };
 
       await onboardingService.submitNgoOnboarding(submitData);
@@ -293,7 +293,7 @@ const NGOOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div data-theme="light" className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto w-full">
         {/* Modern Progress Header */}
         <div className="mb-12">

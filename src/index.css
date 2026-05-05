@@ -7,10 +7,16 @@
     --background: 222 47% 8%;
     --surface: 222 47% 12%;
     --surface-elevated: 222 47% 16%;
-    --border: 222 30% 22%;
+    --surface-hover: 222 47% 19%;
+    --border: 222 30% 20%;
+    --border-subtle: 222 30% 15%;
     --text: 220 20% 92%;
-    --text-muted: 220 15% 60%;
+    --text-muted: 220 15% 58%;
+    --text-faint: 220 15% 38%;
     --accent: 245 80% 65%;
+    --accent-rgb: 99, 102, 241;
+    --input-bg: 222 47% 12%;
+    --input-text: 220 20% 92%;
   }
 
   * { box-sizing: border-box; }
@@ -23,19 +29,88 @@
   }
 
   /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
-  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: hsl(var(--text-muted)); }
+
+  /* Fix select/option appearance — dark theme only (not inside [data-theme=light]) */
+  body:not(:has([data-theme="light"])) select,
+  [data-theme="dark"] select {
+    background-color: hsl(var(--surface));
+    color: hsl(var(--text));
+  }
+  body:not(:has([data-theme="light"])) select option,
+  [data-theme="dark"] select option {
+    background-color: hsl(222 47% 14%);
+    color: hsl(var(--text));
+  }
+
+  /* Fix autofill for dark theme only */
+  body:not(:has([data-theme="light"])) input:-webkit-autofill,
+  body:not(:has([data-theme="light"])) textarea:-webkit-autofill,
+  body:not(:has([data-theme="light"])) select:-webkit-autofill,
+  [data-theme="dark"] input:-webkit-autofill,
+  [data-theme="dark"] textarea:-webkit-autofill {
+    -webkit-text-fill-color: hsl(var(--text));
+    -webkit-box-shadow: 0 0 0px 1000px hsl(var(--surface)) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* ── Light theme reset for onboarding pages ── */
+  [data-theme="light"] {
+    --background: 0 0% 99%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 210 20% 98%;
+    --surface-hover: 210 20% 95%;
+    --border: 220 13% 88%;
+    --border-subtle: 220 13% 93%;
+    --text: 222 47% 11%;
+    --text-muted: 220 9% 40%;
+    --text-faint: 220 9% 60%;
+    --input-bg: 0 0% 98%;
+    --input-text: 222 47% 11%;
+    background-color: hsl(var(--background));
+    color: hsl(var(--text));
+  }
+  /* Ensure inputs inside light theme show dark text */
+  [data-theme="light"] input,
+  [data-theme="light"] textarea,
+  [data-theme="light"] select {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+  }
+  [data-theme="light"] input::placeholder,
+  [data-theme="light"] textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+  [data-theme="light"] input:-webkit-autofill,
+  [data-theme="light"] textarea:-webkit-autofill,
+  [data-theme="light"] select:-webkit-autofill {
+    -webkit-text-fill-color: #0f172a !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  }
+  [data-theme="light"] select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
 }
 
 @layer components {
+  /* ── Cards ── */
   .card {
-    @apply rounded-2xl border bg-opacity-60 backdrop-blur-sm;
+    @apply rounded-2xl border;
     background: hsl(var(--surface) / 0.8);
+    border-color: hsl(var(--border));
+    backdrop-filter: blur(8px);
+  }
+  .card-elevated {
+    @apply rounded-2xl border;
+    background: hsl(var(--surface-elevated) / 0.9);
     border-color: hsl(var(--border));
   }
 
+  /* ── Buttons ── */
   .btn-primary {
     @apply flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200;
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -57,24 +132,70 @@
     color: hsl(var(--text));
   }
 
-  .input-field {
-    @apply w-full px-4 py-3 rounded-xl border outline-none transition-all duration-200 font-sans text-sm;
-    background: hsl(var(--surface));
-    border-color: hsl(var(--border));
+  .btn-secondary {
+    @apply flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-200;
+    background: hsl(var(--surface-elevated));
     color: hsl(var(--text));
+    border: 1px solid hsl(var(--border));
   }
-  .input-field::placeholder { color: hsl(var(--text-muted)); }
-  .input-field:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  .btn-secondary:hover {
+    background: hsl(var(--surface-hover));
+    border-color: hsl(var(--text-muted));
   }
 
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full px-5 py-4 rounded-2xl border-2 transition-all outline-none font-medium;
+    background-color: hsl(var(--input-bg));
+    border-color: rgba(255, 255, 255, 0.05);
+    color: hsl(var(--input-text));
+    caret-color: hsl(var(--accent));
+  }
+  
+  [data-theme="light"] .input-field {
+    border-color: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .input-field::placeholder { color: hsl(var(--text-faint)); }
+  .input-field:focus {
+    border-color: hsl(var(--accent));
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+  }
+  .input-field:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── Badges ── */
   .badge {
     @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
     background: hsl(var(--surface-elevated));
     color: hsl(var(--text));
+    border: 1px solid hsl(var(--border));
+  }
+  .badge-indigo {
+    background: rgba(99,102,241,0.12);
+    color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.25);
+  }
+  .badge-emerald {
+    background: rgba(52,211,153,0.1);
+    color: #6ee7b7;
+    border: 1px solid rgba(52,211,153,0.2);
+  }
+  .badge-amber {
+    background: rgba(251,191,36,0.1);
+    color: #fde68a;
+    border: 1px solid rgba(251,191,36,0.2);
+  }
+  .badge-rose {
+    background: rgba(251,113,133,0.1);
+    color: #fda4af;
+    border: 1px solid rgba(251,113,133,0.2);
   }
 
+  /* ── Nav ── */
   .nav-link {
     @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
     color: hsl(var(--text-muted));
@@ -83,7 +204,57 @@
   .nav-link.active { background: hsl(var(--surface-elevated)); color: white; }
   .nav-link.active svg { color: #6366f1; }
 
-  /* Chat Markdown Styles */
+  /* ── Stat card ── */
+  .stat-card {
+    @apply rounded-2xl border p-6 relative overflow-hidden;
+    background: hsl(var(--surface) / 0.8);
+    border-color: hsl(var(--border));
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .stat-card:hover {
+    border-color: hsl(var(--text-muted));
+    transform: translateY(-1px);
+  }
+
+  /* ── Section header ── */
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-wider;
+    color: hsl(var(--text-faint));
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    @apply h-1.5 rounded-full overflow-hidden;
+    background: hsl(var(--surface-elevated));
+  }
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-1000;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    @apply border-t my-4;
+    border-color: hsl(var(--border));
+  }
+
+  /* ── Role accent tokens ── */
+  /* Seeker: indigo/violet */
+  .accent-seeker { color: #818cf8; }
+  .bg-accent-seeker { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.2); }
+
+  /* Employer: amber/orange */
+  .accent-employer { color: #fbbf24; }
+  .bg-accent-employer { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); }
+
+  /* NGO: emerald/teal */
+  .accent-ngo { color: #34d399; }
+  .bg-accent-ngo { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.2); }
+
+  /* Govt: blue/cyan */
+  .accent-govt { color: #38bdf8; }
+  .bg-accent-govt { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.2); }
+
+  /* ── Chat Markdown ── */
   .chat-markdown p { margin-bottom: 0.5rem; }
   .chat-markdown p:last-child { margin-bottom: 0; }
   .chat-markdown strong { font-weight: 700; color: white; }
@@ -92,4 +263,55 @@
   .chat-markdown li { margin-bottom: 0.25rem; list-style: disc; }
   .chat-markdown ol li { list-style: decimal; }
   .chat-markdown code { background: rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: monospace; }
+
+  /* ── Glassmorphism card variant ── */
+  .glass-card {
+    @apply rounded-3xl border;
+    background: hsl(var(--surface) / 0.6);
+    border-color: hsl(var(--border) / 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+@layer utilities {
+  /* Animations */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% center; }
+    to { background-position: 200% center; }
+  }
+  @keyframes pulse-ring {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.1; transform: scale(1.1); }
+  }
+
+  .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+  .animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
+  .animate-scale-in { animation: scale-in 0.25s ease-out forwards; }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--surface-elevated)) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Glow effects */
+  .glow-indigo { box-shadow: 0 0 20px rgba(99,102,241,0.25); }
+  .glow-emerald { box-shadow: 0 0 20px rgba(52,211,153,0.2); }
+  .glow-amber { box-shadow: 0 0 20px rgba(251,191,36,0.2); }
+  .glow-blue { box-shadow: 0 0 20px rgba(56,189,248,0.2); }
 }

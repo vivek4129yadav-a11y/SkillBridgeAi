@@ -104,16 +104,16 @@ const EmployerOnboarding = () => {
 
     try {
       const payload = {
-        contact_person_name: formData.contact_name,
+        contact_name: formData.contact_name,
         designation: formData.designation,
         company_name: formData.company_name,
-        industry_sector: formData.industry,
+        industry: formData.industry,
         company_size: formData.company_size,
         state: formData.state,
         city: formData.city,
-        roles_hiring_for: formData.hiring_roles,
-        preferred_skills: formData.candidate_skills,
-        work_type_offered: formData.work_types.length > 0 ? formData.work_types[0] : null
+        hiring_roles: formData.hiring_roles,
+        candidate_skills: formData.candidate_skills,
+        work_type: formData.work_types.length > 0 ? formData.work_types[0] : null
       };
       await onboardingService.submitEmployerOnboarding(payload);
       
@@ -156,7 +156,7 @@ const EmployerOnboarding = () => {
                   value={formData.contact_name}
                   onChange={handleInputChange}
                   placeholder="e.g. Vikram Malhotra"
-                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-slate-900/10 focus:border-slate-900 transition-all outline-none bg-slate-50/50"
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-slate-900/10 focus:border-slate-900 transition-all outline-none bg-slate-50/50 text-slate-900 font-medium"
                 />
               </div>
               <div>
@@ -168,7 +168,7 @@ const EmployerOnboarding = () => {
                   value={formData.designation}
                   onChange={handleInputChange}
                   placeholder="e.g. Chief Talent Officer"
-                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-slate-900/10 focus:border-slate-900 transition-all outline-none bg-slate-50/50"
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-slate-900/10 focus:border-slate-900 transition-all outline-none bg-slate-50/50 text-slate-900 font-medium"
                 />
               </div>
             </div>
@@ -197,7 +197,7 @@ const EmployerOnboarding = () => {
                   value={formData.company_name}
                   onChange={handleInputChange}
                   placeholder="e.g. Acme Corporation"
-                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none bg-slate-50/50"
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none bg-slate-50/50 text-slate-900 font-medium"
                 />
               </div>
               <div>
@@ -264,7 +264,7 @@ const EmployerOnboarding = () => {
                     required
                     value={formData.state}
                     onChange={handleInputChange}
-                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none bg-white font-bold"
+                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none bg-white font-bold text-slate-900"
                   >
                     <option value="">Select State</option>
                     {STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -279,7 +279,7 @@ const EmployerOnboarding = () => {
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="e.g. Mumbai"
-                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none bg-slate-50/50"
+                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none bg-slate-50/50 text-slate-900 font-medium"
                   />
                 </div>
               </div>
@@ -309,7 +309,7 @@ const EmployerOnboarding = () => {
                     onChange={(e) => setRoleInput(e.target.value)}
                     onKeyDown={addRole}
                     placeholder="Type role & press Enter (e.g. Electrician)"
-                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none bg-slate-50/50 font-medium"
+                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all outline-none bg-slate-50/50 font-medium text-slate-900"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500">
                     <kbd className="px-2 py-1 bg-white border border-slate-200 rounded-md text-[10px] font-bold">ENTER</kbd>
@@ -398,7 +398,7 @@ const EmployerOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div data-theme="light" className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-2xl mx-auto w-full">
         {/* Progress System */}
         <div className="flex items-center gap-4 mb-12">

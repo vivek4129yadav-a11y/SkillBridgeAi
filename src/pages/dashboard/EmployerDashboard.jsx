@@ -15,6 +15,17 @@ import {
   Filter
 } from 'lucide-react';
 import api from '@/lib/api';
+import { queryClient } from '@/lib/queryClient';
+import { 
+  BarChart, 
+  Activity, 
+  CheckCircle, 
+  ArrowUpRight, 
+  Sparkles,
+  Zap,
+  ShieldCheck,
+  Target
+} from 'lucide-react';
 
 const EmployerDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,16 +63,19 @@ const EmployerDashboard = () => {
     const formData = new FormData(e.target);
     const jobData = {
       title: formData.get('title'),
+      company: formData.get('company'),
       location: formData.get('location'),
+      location_state: formData.get('location_state'),
       type: formData.get('type'),
       salary: formData.get('salary'),
+      category: formData.get('category'),
       description: formData.get('description'),
     };
 
     try {
       await api.post('/jobs', jobData);
       setIsModalOpen(false);
-      // In a real app, we'd refetch postings here
+      queryClient.invalidateQueries({ queryKey: ['my-postings'] });
     } catch (err) {
       console.error('Failed to post job:', err);
     } finally {
@@ -88,27 +102,58 @@ const EmployerDashboard = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { label: 'Active Postings', value: jobPostings?.length || 0, icon: Briefcase, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
-          { label: 'Total Applicants', value: '48', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-          { label: 'Avg. Match Score', value: '82%', icon: TrendingUp, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          { label: 'Total Applicants', value: '1,284', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: 'AI Screened', value: '842', icon: ShieldCheck, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: 'Hiring Velocity', value: '+24%', icon: TrendingUp, color: 'text-amber-400', bg: 'bg-amber-500/10' },
         ].map((stat, i) => (
-          <div key={i} className="bg-gray-900/60 border border-gray-800 p-6 rounded-2xl flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
+          <div key={i} className="glass-card p-6 flex items-center gap-4 hover:border-white/20 transition-all cursor-default">
+            <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
               <stat.icon size={24} />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">{stat.label}</p>
-              <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{stat.label}</p>
+              <p className="text-2xl font-bold text-white mt-0.5">{stat.value}</p>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left: Job Postings */}
-        <div className="lg:col-span-8 space-y-6">
+        {/* Left Column: Postings + Funnel */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Hiring Funnel */}
+          <div className="glass-card p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                <BarChart size={22} className="text-indigo-400" />
+                Recruitment Funnel
+              </h2>
+              <span className="text-xs text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Real-time Analysis</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Sourced', value: '1,284', color: 'bg-indigo-500', pct: '100%' },
+                { label: 'Matched', value: '412', color: 'bg-purple-500', pct: '32%' },
+                { label: 'Screened', value: '156', color: 'bg-amber-500', pct: '12%' },
+                { label: 'Hired', value: '12', color: 'bg-emerald-500', pct: '1%' },
+              ].map((item, i) => (
+                <div key={i} className="relative">
+                  <div className="h-24 bg-gray-900/40 rounded-2xl border border-gray-800 p-4 flex flex-col justify-end overflow-hidden group">
+                    <div 
+                      className={`absolute bottom-0 left-0 right-0 ${item.color} opacity-10 transition-all duration-1000`} 
+                      style={{ height: item.pct }}
+                    />
+                    <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">{item.label}</p>
+                    <p className="text-xl font-bold text-white">{item.value}</p>
+                    <div className="absolute top-4 right-4 text-[10px] font-black text-gray-700">{item.pct}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <LayoutDashboard size={22} className="text-indigo-400" />
@@ -183,57 +228,109 @@ const EmployerDashboard = () => {
           </div>
         </div>
 
-        {/* Right: Talent Matches */}
-        <div className="lg:col-span-4 space-y-6">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Users size={22} className="text-emerald-400" />
-            AI Talent Matches
-          </h2>
+        {/* Right: Intelligence + Talent */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* AI Activity Feed */}
+          <div className="glass-card p-6">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-6">
+              <Activity size={18} className="text-rose-400" />
+              AI Agent Activity
+            </h2>
+            <div className="space-y-6">
+              {[
+                { type: 'match', text: 'AI matched 4 new candidates for Electrician role', time: '2m ago' },
+                { type: 'screen', text: 'Interview completed for Senior Developer', time: '14m ago' },
+                { type: 'jd', text: 'JD Optimized for Marketing Intern', time: '1h ago' },
+              ].map((act, i) => (
+                <div key={i} className="flex gap-4 relative">
+                  {i < 2 && <div className="absolute left-2 top-6 bottom-[-16px] w-[2px] bg-gray-800" />}
+                  <div className={`w-4 h-4 rounded-full mt-1 flex-shrink-0 z-10 ${
+                    act.type === 'match' ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]' :
+                    act.type === 'screen' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500'
+                  }`} />
+                  <div>
+                    <p className="text-xs text-gray-300 leading-relaxed">{act.text}</p>
+                    <p className="text-[10px] text-gray-600 mt-1">{act.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Sparkles size={20} className="text-amber-400" />
+              Top AI Matches
+            </h2>
+            <button className="text-[10px] font-bold text-indigo-400 hover:underline">View All</button>
+          </div>
 
           <div className="space-y-4">
             {talentLoading ? (
-              [1, 2, 3].map(i => <div key={i} className="h-24 bg-gray-900/40 animate-pulse rounded-2xl border border-gray-800" />)
+              [1, 2, 3].map(i => <div key={i} className="h-28 bg-gray-900/40 animate-pulse rounded-2xl border border-gray-800" />)
             ) : talentMatches?.length > 0 ? (
               talentMatches.map((person, i) => (
-                <div key={i} className="bg-gray-900/60 border border-gray-800 p-4 rounded-2xl hover:border-emerald-500/30 transition-all flex gap-4">
-                  <div className="w-12 h-12 bg-gray-800 rounded-full flex-shrink-0 border border-gray-700 overflow-hidden">
-                    {/* Placeholder for avatar */}
-                    <div className="w-full h-full flex items-center justify-center text-gray-500">
-                      <Users size={24} />
+                <div key={person.id || i} className="glass-card p-5 hover:border-indigo-500/40 transition-all group relative overflow-hidden">
+                  <div className="flex gap-4 relative z-10">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gray-800 rounded-2xl flex-shrink-0 border border-gray-700 overflow-hidden group-hover:border-indigo-500/50 transition-all">
+                        <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-gray-800 to-gray-900">
+                          <Users size={24} />
+                        </div>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-gray-900 flex items-center justify-center text-[8px] text-white font-bold">
+                        <Zap size={8} fill="white" />
+                      </div>
+                    </div>
+                    <div className="flex-grow">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-all">{person.name}</h4>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{person.role}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                            {person.match}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1 mt-3">
+                        {(person.top_skills || []).map((s, idx) => (
+                          <span key={idx} className="text-[9px] px-2 py-0.5 bg-gray-900/80 text-gray-400 rounded-md border border-gray-800 group-hover:border-indigo-500/20 transition-all">{s}</span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex-grow">
-                    <div className="flex justify-between items-start">
-                      <h4 className="text-sm font-bold text-white">{person.name || "Candidate " + (i+1)}</h4>
-                      <span className="text-[10px] text-emerald-400 font-bold">{person.match_score || "94"}%</span>
-                    </div>
-                    <p className="text-[10px] text-gray-500 mt-0.5">{person.current_role || "Skilled Electrician"}</p>
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {(person.skills || ["Wiring", "Safety", "Maintenance"]).map((s, idx) => (
-                        <span key={idx} className="text-[8px] px-1.5 py-0.5 bg-gray-800 text-gray-400 rounded-md border border-gray-700">{s}</span>
-                      ))}
-                    </div>
-                  </div>
+                  
+                  {/* Action overlay on hover */}
+                  <div className="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center bg-gray-900/20 border border-dashed border-gray-800 rounded-3xl">
-                <p className="text-gray-600 text-xs italic">Matches will appear once you have active job postings.</p>
+              <div className="p-12 text-center glass-card border-dashed">
+                <Target size={32} className="mx-auto text-gray-700 mb-4 opacity-20" />
+                <p className="text-gray-500 text-xs italic">Awaiting new job postings to start AI matchmaking.</p>
               </div>
             )}
           </div>
 
-          {/* Integration Card */}
-          <div className="bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/30 p-6 rounded-3xl relative overflow-hidden group">
+          {/* Quick Actions Card */}
+          <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 p-8 rounded-3xl relative overflow-hidden group">
             <div className="relative z-10">
-              <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-amber-400" />
-                Verified Talent Only
+              <h3 className="text-md font-bold text-white mb-3 flex items-center gap-2">
+                <Sparkles size={18} className="text-amber-400" />
+                AI Agent Booster
               </h3>
-              <p className="text-[10px] text-gray-300 leading-relaxed mb-4">
-                All candidates in our top-tier pool have completed AI skill assessments and trade verifications.
+              <p className="text-xs text-gray-300 leading-relaxed mb-6">
+                Your AI agents are currently screening at 80% capacity. Enable 'Turbo Mode' to source from premium partner networks.
               </p>
-              <button className="text-[10px] font-bold text-amber-400 hover:underline">Learn about our vetting process →</button>
+              <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20">
+                Enable Turbo Mode
+              </button>
+            </div>
+            <div className="absolute -right-8 -bottom-8 opacity-10 group-hover:rotate-12 transition-all duration-700">
+              <Zap size={140} />
             </div>
           </div>
         </div>
@@ -254,30 +351,60 @@ const EmployerDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-300">Job Title</label>
-                  <input name="title" type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all" placeholder="e.g. Senior Electrician" required />
+                  <input name="title" type="text" className="input-field" placeholder="e.g. Senior Electrician" required />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-300">Location</label>
-                  <input name="location" type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all" placeholder="e.g. Bhopal, MP" required />
+                  <label className="text-sm font-bold text-gray-300">Company Name</label>
+                  <input name="company" type="text" className="input-field" placeholder="e.g. Acme Corp" required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-300">City</label>
+                  <input name="location" type="text" className="input-field" placeholder="e.g. Bhopal" required />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-300">State</label>
+                  <select name="location_state" className="input-field" required>
+                    <option value="madhya_pradesh">Madhya Pradesh</option>
+                    <option value="maharashtra">Maharashtra</option>
+                    <option value="delhi">Delhi</option>
+                    <option value="karnataka">Karnataka</option>
+                    <option value="tamil_nadu">Tamil Nadu</option>
+                    <option value="uttar_pradesh">Uttar Pradesh</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-300">Employment Type</label>
-                  <select name="type" className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all">
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                    <option value="Contract">Contract</option>
-                    <option value="Apprenticeship">Apprenticeship</option>
+                  <select name="type" className="input-field">
+                    <option value="full_time">Full-time</option>
+                    <option value="part_time">Part-time</option>
+                    <option value="contract">Contract</option>
+                    <option value="gig">Gig / Freelance</option>
+                    <option value="apprenticeship">Apprenticeship</option>
+                    <option value="internship">Internship</option>
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-300">Monthly Salary (INR)</label>
-                  <input name="salary" type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all" placeholder="e.g. 25,000 - 35,000" />
+                  <input name="salary" type="text" className="input-field" placeholder="e.g. 25,000 - 35,000" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-300">Job Category</label>
+                  <select name="category" className="input-field">
+                    <option value="IT & Software">IT & Software</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Construction">Construction</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Education">Education</option>
+                    <option value="Logistics">Logistics</option>
+                    <option value="General">General / Others</option>
+                  </select>
                 </div>
               </div>
               
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-300">Requirements & Description</label>
-                <textarea name="description" rows={4} className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-indigo-500 outline-none transition-all resize-none" placeholder="What are you looking for in a candidate?"></textarea>
+                <textarea name="description" rows={4} className="input-field resize-none h-32" placeholder="What are you looking for in a candidate?"></textarea>
               </div>
 
               <div className="flex gap-4 pt-4">

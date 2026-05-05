@@ -381,7 +381,7 @@ const InformalWorkerOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div data-theme="light" className="min-h-screen bg-[#FDFDFD] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto w-full">
         {/* Progress Header */}
         <div className="mb-12">

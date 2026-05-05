@@ -77,9 +77,9 @@ const GovernmentOnboarding = () => {
 
     try {
       const submitData = {
-        full_name_with_prefix: formData.full_name,
-        official_designation: formData.designation,
-        governing_department: formData.department,
+        full_name: formData.full_name,
+        designation: formData.designation,
+        department: formData.department,
         state_jurisdiction: formData.state_jurisdiction,
         access_level: formData.access_level,
         district_jurisdiction: formData.district_jurisdiction
@@ -273,7 +273,7 @@ const GovernmentOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div data-theme="light" className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto w-full">
         {/* State Grade Step Indicator */}
         <div className="flex items-center justify-center gap-4 mb-12">

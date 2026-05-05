@@ -61,9 +61,9 @@ export interface EmployerOnboardingData {
 export interface NgoOnboardingData {
   org_name: string;
   reg_number?: string;
-  focus_sector: string;
+  focus_sectors: string[];
   coverage_areas: string[];
-  beneficiary_type: string;
+  beneficiary_types: string[];
   contact_name: string;
   contact_designation: string;
 }
@@ -170,7 +170,19 @@ export const onboardingService = {
   },
 
   submitEmployerOnboarding: async (data: EmployerOnboardingData) => {
-    const response = await api.post(`/onboarding/employer`, data);
+    const backendData = {
+      contact_person_name: data.contact_name,
+      designation: data.designation,
+      company_name: data.company_name,
+      industry_sector: data.industry,
+      company_size: data.company_size,
+      state: data.state,
+      city: data.city,
+      roles_hiring_for: data.hiring_roles,
+      preferred_skills: data.candidate_skills,
+      work_type_offered: data.work_type
+    };
+    const response = await api.post(`/onboarding/employer`, backendData);
     
     if (response.data) {
       useAuthStore.setState((state) => ({
@@ -182,7 +194,16 @@ export const onboardingService = {
   },
 
   submitNgoOnboarding: async (data: NgoOnboardingData) => {
-    const response = await api.post(`/onboarding/ngo`, data);
+    const backendData = {
+      org_name: data.org_name,
+      registration_number: data.reg_number,
+      focus_sectors: data.focus_sectors,
+      coverage_areas: data.coverage_areas,
+      beneficiary_types: data.beneficiary_types,
+      contact_name: data.contact_name,
+      contact_designation: data.contact_designation
+    };
+    const response = await api.post(`/onboarding/ngo`, backendData);
     
     if (response.data) {
       useAuthStore.setState((state) => ({
@@ -194,7 +215,15 @@ export const onboardingService = {
   },
 
   submitGovtOnboarding: async (data: GovtOnboardingData) => {
-    const response = await api.post(`/onboarding/government`, data);
+    const backendData = {
+      full_name: data.full_name,
+      designation: data.designation,
+      department: data.department,
+      access_level: data.access_level || 'State',
+      state_jurisdiction: data.state_jurisdiction,
+      district_jurisdiction: data.district_jurisdiction
+    };
+    const response = await api.post(`/onboarding/government`, backendData);
     
     if (response.data) {
       useAuthStore.setState((state) => ({
