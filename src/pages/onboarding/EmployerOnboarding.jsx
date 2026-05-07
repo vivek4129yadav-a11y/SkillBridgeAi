@@ -4,30 +4,56 @@ import { onboardingService } from '@/services/onboardingService';
 import { useAuthStore } from '@/store/authStore';
 
 const STATES = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
-  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 
-  'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 
-  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
-  'Uttarakhand', 'West Bengal', 'Delhi'
+  { id: 'andhra_pradesh', label: 'Andhra Pradesh' },
+  { id: 'arunachal_pradesh', label: 'Arunachal Pradesh' },
+  { id: 'assam', label: 'Assam' },
+  { id: 'bihar', label: 'Bihar' },
+  { id: 'chhattisgarh', label: 'Chhattisgarh' },
+  { id: 'goa', label: 'Goa' },
+  { id: 'gujarat', label: 'Gujarat' },
+  { id: 'haryana', label: 'Haryana' },
+  { id: 'himachal_pradesh', label: 'Himachal Pradesh' },
+  { id: 'jharkhand', label: 'Jharkhand' },
+  { id: 'karnataka', label: 'Karnataka' },
+  { id: 'kerala', label: 'Kerala' },
+  { id: 'madhya_pradesh', label: 'Madhya Pradesh' },
+  { id: 'maharashtra', label: 'Maharashtra' },
+  { id: 'manipur', label: 'Manipur' },
+  { id: 'meghalaya', label: 'Meghalaya' },
+  { id: 'mizoram', label: 'Mizoram' },
+  { id: 'nagaland', label: 'Nagaland' },
+  { id: 'odisha', label: 'Odisha' },
+  { id: 'punjab', label: 'Punjab' },
+  { id: 'rajasthan', label: 'Rajasthan' },
+  { id: 'sikkim', label: 'Sikkim' },
+  { id: 'tamil_nadu', label: 'Tamil Nadu' },
+  { id: 'telangana', label: 'Telangana' },
+  { id: 'tripura', label: 'Tripura' },
+  { id: 'uttar_pradesh', label: 'Uttar Pradesh' },
+  { id: 'uttarakhand', label: 'Uttarakhand' },
+  { id: 'west_bengal', label: 'West Bengal' },
+  { id: 'delhi', label: 'Delhi' }
 ];
 
 const INDUSTRIES = [
-  'IT & Software', 'Manufacturing', 'Retail', 'Healthcare', 'Construction', 
-  'Finance', 'Education', 'Logistics', 'Automobile', 'Other'
+  { id: 'tech', label: 'Technology & IT', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { id: 'retail', label: 'Retail & E-commerce', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { id: 'service', label: 'Services & Hospitality', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { id: 'manufacturing', label: 'Manufacturing', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+  { id: 'finance', label: 'Banking & Finance', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.623 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.407-2.623-1M12 16v-1m4-12H8a2 2 0 00-2 2v14a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2z' },
+  { id: 'other', label: 'Other Industries', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
 ];
 
 const COMPANY_SIZES = [
-  { val: '1-10', label: 'Startup (1-10)' },
-  { val: '11-50', label: 'Small Business (11-50)' },
-  { val: '51-200', label: 'Medium Enterprise (51-200)' },
-  { val: '200+', label: 'Large Corporate (200+)' }
+  { id: '1-10', label: 'Micro (1-10)' },
+  { id: '11-50', label: 'Small (11-50)' },
+  { id: '51-200', label: 'Medium (51-200)' },
+  { id: '200+', label: 'Enterprise (200+)' }
 ];
 
 const WORK_TYPES = [
-  { id: 'Full-time', icon: '👔' },
-  { id: 'Part-time', icon: '🕒' },
-  { id: 'Contract', icon: '📄' },
-  { id: 'Apprenticeship', icon: '🎓' }
+  { id: 'contract', icon: '📄', label: 'Contract' },
+  { id: 'apprenticeship', icon: '🎓', label: 'Apprenticeship' }
 ];
 
 const SKILLS = [
@@ -46,7 +72,7 @@ const EmployerOnboarding = () => {
     contact_name: '',
     designation: '',
     company_name: '',
-    industry: 'IT & Software',
+    industry: 'tech',
     company_size: '11-50',
     state: '',
     city: '',
@@ -267,7 +293,7 @@ const EmployerOnboarding = () => {
                     className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none bg-white font-bold text-slate-900"
                   >
                     <option value="">Select State</option>
-                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    {STATES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                   </select>
                 </div>
                 <div>

@@ -55,6 +55,18 @@ const EmployerDashboard = () => {
     }
   });
 
+  const { data: summary } = useQuery({
+    queryKey: ['dashboard-summary'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/dashboard/summary');
+        return data.data;
+      } catch (err) {
+        return null;
+      }
+    }
+  });
+
   const [isPosting, setIsPosting] = useState(false);
 
   const handlePostSubmit = async (e) => {
@@ -89,7 +101,9 @@ const EmployerDashboard = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Employer Hub</h1>
+          <h1 className="text-3xl font-bold text-white">
+            Hello, {summary?.profile?.full_name?.split(' ')[0] || 'Employer'}
+          </h1>
           <p className="text-gray-400 mt-1">Manage your postings and discover top talent.</p>
         </div>
         <button 

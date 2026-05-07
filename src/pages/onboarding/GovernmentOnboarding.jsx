@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onboardingService } from '@/services/onboardingService';
 import { useAuthStore } from '@/store/authStore';
+import { useToast } from '@/hooks/use-toast';
 
 const DEPARTMENTS = [
   { id: 'Labour', label: 'Ministry of Labour', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
@@ -35,6 +36,7 @@ const DISTRICTS = [
 
 const GovernmentOnboarding = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -95,7 +97,13 @@ const GovernmentOnboarding = () => {
       navigate('/dashboard');
     } catch (err) {
       const detail = err.response?.data?.detail;
-      setError(Array.isArray(detail) ? detail[0].msg : (detail || 'Failed to complete onboarding. Please try again.'));
+      const message = Array.isArray(detail) ? detail[0].msg : (detail || 'Failed to complete onboarding. Please try again.');
+      setError(message);
+      toast({ 
+        title: 'Onboarding Error', 
+        description: message, 
+        variant: 'destructive' 
+      });
     } finally {
       setLoading(false);
     }

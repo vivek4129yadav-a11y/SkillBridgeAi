@@ -4,28 +4,57 @@ import { onboardingService } from '@/services/onboardingService';
 import { useAuthStore } from '@/store/authStore';
 
 const STATES = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 
-  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 
-  'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 
-  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 
-  'Uttarakhand', 'West Bengal', 'Delhi'
+  { id: 'andhra_pradesh', label: 'Andhra Pradesh' },
+  { id: 'arunachal_pradesh', label: 'Arunachal Pradesh' },
+  { id: 'assam', label: 'Assam' },
+  { id: 'bihar', label: 'Bihar' },
+  { id: 'chhattisgarh', label: 'Chhattisgarh' },
+  { id: 'goa', label: 'Goa' },
+  { id: 'gujarat', label: 'Gujarat' },
+  { id: 'haryana', label: 'Haryana' },
+  { id: 'himachal_pradesh', label: 'Himachal Pradesh' },
+  { id: 'jharkhand', label: 'Jharkhand' },
+  { id: 'karnataka', label: 'Karnataka' },
+  { id: 'kerala', label: 'Kerala' },
+  { id: 'madhya_pradesh', label: 'Madhya Pradesh' },
+  { id: 'maharashtra', label: 'Maharashtra' },
+  { id: 'manipur', label: 'Manipur' },
+  { id: 'meghalaya', label: 'Meghalaya' },
+  { id: 'mizoram', label: 'Mizoram' },
+  { id: 'nagaland', label: 'Nagaland' },
+  { id: 'odisha', label: 'Odisha' },
+  { id: 'punjab', label: 'Punjab' },
+  { id: 'rajasthan', label: 'Rajasthan' },
+  { id: 'sikkim', label: 'Sikkim' },
+  { id: 'tamil_nadu', label: 'Tamil Nadu' },
+  { id: 'telangana', label: 'Telangana' },
+  { id: 'tripura', label: 'Tripura' },
+  { id: 'uttar_pradesh', label: 'Uttar Pradesh' },
+  { id: 'uttarakhand', label: 'Uttarakhand' },
+  { id: 'west_bengal', label: 'West Bengal' },
+  { id: 'delhi', label: 'Delhi' }
 ];
 
 const TRADES = [
-  { id: 'Electrician', label: 'Electrician', icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'bg-amber-500' },
-  { id: 'Plumber', label: 'Plumber', icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.673.337a4 4 0 01-4.827-.63l-1.04-1.04a4 4 0 01-.63-4.826l.337-.674a6 6 0 00.517-3.86l-.477-2.387a2 2 0 00-1.022-1.547l-.318-.158a2 2 0 00-2.827 1.022l-.158.318a2 2 0 001.022 2.827l.318.158a2 2 0 002.827-1.022l.158-.318a2 2 0 00-1.022-2.827l-.318-.158', color: 'bg-blue-500' },
-  { id: 'Carpenter', label: 'Carpenter', icon: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.07 7.07l-3.77 3.77a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 017.07-7.07l-3.77-3.77z', color: 'bg-orange-600' },
-  { id: 'Welder', label: 'Welder', icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'bg-slate-700' },
-  { id: 'Mason', label: 'Mason', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', color: 'bg-red-600' },
-  { id: 'Painter', label: 'Painter', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01', color: 'bg-rose-500' },
-  { id: 'Mechanic', label: 'Mechanic', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', color: 'bg-slate-600' },
-  { id: 'Other', label: 'Other', icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', color: 'bg-slate-400' }
+  { id: 'electrician', label: 'Electrician', icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'bg-amber-500' },
+  { id: 'plumber', label: 'Plumber', icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.673.337a4 4 0 01-4.827-.63l-1.04-1.04a4 4 0 01-.63-4.826l.337-.674a6 6 0 00.517-3.86l-.477-2.387a2 2 0 00-1.022-1.547l-.318-.158a2 2 0 00-2.827 1.022l-.158.318a2 2 0 001.022 2.827l.318.158a2 2 0 002.827-1.022l.158-.318a2 2 0 00-1.022-2.827l-.318-.158', color: 'bg-blue-500' },
+  { id: 'carpenter', label: 'Carpenter', icon: 'M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.07 7.07l-3.77 3.77a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 017.07-7.07l-3.77-3.77z', color: 'bg-orange-600' },
+  { id: 'welder', label: 'Welder', icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'bg-slate-700' },
+  { id: 'mason', label: 'Mason', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', color: 'bg-red-600' },
+  { id: 'painter', label: 'Painter', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01', color: 'bg-rose-500' },
+  { id: 'mechanic', label: 'Mechanic', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z', color: 'bg-slate-600' },
+  { id: 'other', label: 'Other', icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', color: 'bg-slate-400' }
 ];
 
 const EXP_YEARS = ['0-1', '1-3', '3-5', '5+'];
-const EMPLOYMENT_STATUS = ['Yes', 'No', 'Seasonal'];
-const RADII = ['Local', 'District', 'State', 'Anywhere'];
-const LANGUAGES = ['English', 'Hindi', 'Bengali', 'Telugu', 'Marathi', 'Tamil', 'Urdu', 'Gujarati', 'Kannada', 'Odia', 'Punjabi', 'Malayalam'];
+const EMPLOYMENT_STATUS = ['yes', 'no', 'seasonal'];
+const RADII = [
+  { id: 'local', label: 'Local' },
+  { id: 'district', label: 'District' },
+  { id: 'state', label: 'State' },
+  { id: 'anywhere', label: 'Anywhere' }
+];
+const LANGUAGES = ['english', 'hindi', 'bengali', 'telugu', 'marathi', 'tamil', 'urdu', 'gujarati', 'kannada', 'odia', 'punjabi', 'malayalam'];
 
 const BlueCollarOnboarding = () => {
   const navigate = useNavigate();
@@ -40,11 +69,11 @@ const BlueCollarOnboarding = () => {
     state: '',
     city: '',
     village_district: '',
-    primary_trade: 'Electrician',
+    primary_trade: 'electrician',
     secondary_skills: [],
     years_experience: '1-3',
-    currently_employed: 'No',
-    work_radius: 'Local',
+    currently_employed: 'no',
+    work_radius: 'local',
     languages: [],
     owns_smartphone: true
   });
@@ -175,7 +204,7 @@ const BlueCollarOnboarding = () => {
                   className="w-full px-5 py-4 rounded-2xl border-2 border-slate-100 bg-slate-50/30 focus:bg-white focus:border-orange-500 transition-all outline-none text-slate-800 font-bold"
                 >
                   <option value="">Select State</option>
-                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  {STATES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -341,16 +370,16 @@ const BlueCollarOnboarding = () => {
                 <div className="grid grid-cols-2 gap-3">
                   {RADII.map(radius => (
                     <button
-                      key={radius}
+                      key={radius.id}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, work_radius: radius }))}
+                      onClick={() => setFormData(prev => ({ ...prev, work_radius: radius.id }))}
                       className={`p-4 rounded-2xl border-2 transition-all font-bold ${
-                        formData.work_radius === radius
+                        formData.work_radius === radius.id
                           ? 'border-orange-600 bg-orange-50 text-orange-900 shadow-md'
                           : 'border-slate-100 bg-white text-slate-500 hover:border-orange-200'
                       }`}
                     >
-                      {radius}
+                      {radius.label}
                     </button>
                   ))}
                 </div>
@@ -389,7 +418,7 @@ const BlueCollarOnboarding = () => {
                       key={lang}
                       type="button"
                       onClick={() => toggleArrayItem('languages', lang)}
-                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all capitalize ${
                         formData.languages.includes(lang)
                           ? 'bg-orange-600 text-white shadow-lg'
                           : 'bg-white text-slate-500 border-2 border-slate-100 hover:border-orange-200'

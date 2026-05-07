@@ -17,22 +17,20 @@ export const GapAnalysisPage: React.FC = () => {
     runAnalysis();
   };
 
-  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 max-w-2xl mx-auto text-center px-4">
         <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-blue-100 blur-xl opacity-50 animate-pulse" />
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin relative z-10" />
+          <div className="absolute inset-0 rounded-full bg-indigo-500/20 blur-2xl animate-pulse" />
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin relative z-10" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-gray-900">Analyzing your profile...</h2>
-          <p className="text-gray-500 font-medium max-w-sm mx-auto">
+          <h2 className="text-2xl font-bold text-white">Analyzing your profile...</h2>
+          <p className="text-gray-400 font-medium max-w-sm mx-auto">
             We are comparing your skills against current job market demands in your area.
           </p>
         </div>
       </div>
     );
-  }
 
   // Handle generic error (might be 400 for NO_SKILLS or NO_JOBS)
   if (error) {
@@ -41,19 +39,19 @@ export const GapAnalysisPage: React.FC = () => {
     if (errCode === 'GAP_ANALYSIS_NO_SKILLS') {
       return (
         <div className="max-w-[600px] mx-auto pt-16 px-4">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12 text-center">
-            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+          <div className="card p-8 sm:p-12 text-center">
+            <div className="w-16 h-16 bg-indigo-500/10 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl border border-indigo-500/20">
               👋
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Let's get to know your skills first</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-white mb-4">Let's get to know your skills first</h2>
+            <p className="text-gray-400 mb-8 max-w-md mx-auto font-medium">
               Before we can show your gap analysis, we need to know what you can do. You can either take our quick assessment or upload a resume.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/assessment')} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
+              <button onClick={() => navigate('/assessment')} className="btn-primary">
                 Take Skill Assessment
               </button>
-              <button onClick={() => navigate('/profile')} className="px-6 py-3 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg font-bold hover:bg-gray-100 transition">
+              <button onClick={() => navigate('/profile')} className="btn-secondary">
                 Upload Your Resume
               </button>
             </div>
@@ -65,16 +63,16 @@ export const GapAnalysisPage: React.FC = () => {
     if (errCode === 'GAP_ANALYSIS_NO_JOBS') {
        return (
          <div className="max-w-[600px] mx-auto pt-16 px-4">
-           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
-             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
+           <div className="card p-8 text-center">
+             <div className="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl border border-amber-500/20">
                🔍
              </div>
-             <h2 className="text-2xl font-bold text-gray-900 mb-4">No job listings found in your area</h2>
-             <p className="text-gray-600 mb-8 max-w-md mx-auto">
+             <h2 className="text-2xl font-bold text-white mb-4">No job listings found in your area</h2>
+             <p className="text-gray-400 mb-8 max-w-md mx-auto font-medium">
                We couldn't find enough active job listings matching your state or interests to run a gap analysis.
                Try updating your profile with more interests or check back later!
              </p>
-             <button onClick={() => navigate('/profile')} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
+             <button onClick={() => navigate('/profile')} className="btn-primary">
                Update Profile Interests
              </button>
            </div>
@@ -91,20 +89,20 @@ export const GapAnalysisPage: React.FC = () => {
     <div className="max-w-5xl mx-auto pt-8 px-4 pb-20">
       
       {report.is_stale && !isRerunning && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-sm animate-in fade-in">
+        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-200 px-4 py-3 rounded-xl mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-sm animate-in fade-in">
           <div className="flex items-center gap-2 font-medium">
-            <Info className="w-5 h-5 text-amber-600 shrink-0" />
+            <Info className="w-5 h-5 text-amber-400 shrink-0" />
             <span>Your profile has changed. Re-run analysis for updated recommendations!</span>
           </div>
-          <button onClick={handleRerun} className="px-4 py-2 bg-white text-amber-700 font-bold border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors whitespace-nowrap">
+          <button onClick={handleRerun} className="px-4 py-2 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap text-sm">
             Re-run Analysis
           </button>
         </div>
       )}
 
       {noJobs && (
-         <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-xl mb-6 flex items-start gap-3 shadow-sm">
-           <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+         <div className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-200 px-4 py-3 rounded-xl mb-6 flex items-start gap-3 shadow-sm">
+           <Info className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
            <div className="font-medium text-sm leading-relaxed">
              No job listings available for your region or interests yet. We are adding more soon. Showing strengths based on general data.
            </div>

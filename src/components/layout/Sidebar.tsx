@@ -1,4 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import api from '@/lib/api'
 import { 
     LayoutDashboard, 
     User, 
@@ -97,6 +99,12 @@ export default function Sidebar() {
     const { logout, user } = useAuthStore()
     const navigate = useNavigate()
 
+    const { data: profile, isLoading: profileLoading } = useQuery({
+        queryKey: ['profile'],
+        queryFn: async () => (await api.get('/profile/me')).data.data,
+        enabled: !!user,
+    })
+
     const isSeeker = user?.user_type && SEEKER_ROLES.includes(user.user_type)
     const isEmployer = user?.user_type === 'org_employer'
 
@@ -167,9 +175,15 @@ export default function Sidebar() {
 
             {/* Footer */}
             <div className="px-3 py-4 border-t" style={{ borderColor: 'hsl(222 30% 18%)' }}>
-                <div className="px-4 py-2 mb-2">
+                <div className="px-4 py-2 mb-2 min-h-[44px] flex flex-col justify-center">
                     <p className="text-xs" style={{ color: 'hsl(220 15% 55%)' }}>Logged in as</p>
-                    <p className="text-sm font-medium text-white truncate">{user?.email}</p>
+                    {profileLoading ? (
+                        <div className="h-4 w-24 bg-white/5 animate-pulse rounded mt-1" />
+                    ) : (
+                        <p className="text-sm font-medium text-white truncate mt-0.5">
+                            {profile?.full_name || user?.email}
+                        </p>
+                    )}
                 </div>
                 <button onClick={handleLogout} className="nav-link w-full text-left">
                     <LogOut size={18} />

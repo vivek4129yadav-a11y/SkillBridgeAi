@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { User as UserIcon, Upload, Star } from 'lucide-react'
+import { User as UserIcon, Upload, Star, Sparkles } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { SEEKER_ROLES, isSeeker } from '@/constants/roles'
+import { useToast } from '@/hooks/use-toast'
 
 export default function ProfilePage() {
     const qc = useQueryClient()
+    const { toast } = useToast()
     const user = useAuthStore(s => s.user)
     const isSeekerRole = isSeeker(user?.user_type)
     console.log('[PROFILE] User Role:', user?.user_type, 'Is Seeker:', isSeekerRole)
@@ -32,11 +34,32 @@ export default function ProfilePage() {
 
     const updateProfile = useMutation({
         mutationFn: (data: object) => api.patch('/profile/me', data),
-        onSuccess: () => { qc.invalidateQueries({ queryKey: ['profile'] }); qc.invalidateQueries({ queryKey: ['completion'] }); setEditMode(false) },
+        onSuccess: () => { 
+            qc.invalidateQueries({ queryKey: ['profile'] }); 
+            qc.invalidateQueries({ queryKey: ['completion'] }); 
+            setEditMode(false);
+            toast({ title: 'Profile Updated', description: 'Your changes have been saved successfully.', variant: 'success' });
+        },
+        onError: (err: any) => {
+            const detail = err.response?.data?.detail;
+            const message = Array.isArray(detail) ? detail[0].msg : (detail || 'Failed to update profile');
+            toast({ title: 'Update Failed', description: message, variant: 'destructive' });
+        }
     })
 
     function handleEdit() {
-        setForm({ full_name: profile?.full_name || '', phone: profile?.phone || '', city: profile?.city || '' })
+        setForm({ 
+            full_name: profile?.full_name || '', 
+            phone: profile?.phone || '', 
+            city: profile?.city || '',
+            state: profile?.state || '',
+            age: profile?.age?.toString() || '',
+            gender: profile?.gender || '',
+            education_level: profile?.education_level || '',
+            languages: (profile?.languages || []).join(', '),
+            secondary_skills: (profile?.secondary_skills || []).join(', '),
+            interests: (profile?.interests || []).join(', ')
+        })
         setEditMode(true)
     }
 
@@ -100,19 +123,113 @@ export default function ProfilePage() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {['full_name', 'phone', 'city'].map(k => (
-                            <div key={k}>
-                                <label className="block text-sm font-medium mb-1.5 capitalize" style={{ color: 'hsl(220 20% 80%)' }}>{k.replace('_', ' ')}</label>
-                                <input className="input-field" value={form[k]} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {['full_name', 'phone', 'city', 'state', 'age', 'gender', 'education_level'].map(k => (
+                                <div key={k}>
+                                    <label className="block text-sm font-medium mb-1.5 capitalize" style={{ color: 'hsl(220 20% 80%)' }}>{k.replace('_', ' ')}</label>
+                                    {k === 'education_level' ? (
+                                        <select className="input-field" value={form[k]} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))}>
+                                            <option value="">Select Education</option>
+                                            <option value="none">None</option>
+                                            <option value="primary">Primary</option>
+                                            <option value="secondary">Secondary</option>
+                                            <option value="higher_secondary">Higher Secondary</option>
+                                            <option value="graduate">Graduate</option>
+                                            <option value="postgraduate">Post Graduate</option>
+                                            <option value="vocational">Vocational</option>
+                                        </select>
+                                    ) : k === 'gender' ? (
+                                        <select className="input-field" value={form[k]} onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))}>
+                                            <option value="">Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    ) : (
+                                        <input 
+                                            className="input-field" 
+                                            type={k === 'age' ? 'number' : 'text'}
+                                            value={form[k]} 
+                                            onChange={e => setForm(f => ({ ...f, [k]: e.target.value }))} 
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1.5" style={{ color: 'hsl(220 20% 80%)' }}>Languages (comma separated)</label>
+                            <input className="input-field" value={form.languages} onChange={e => setForm(f => ({ ...f, languages: e.target.value }))} placeholder="e.g. English, Hindi" />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5" style={{ color: 'hsl(220 20% 80%)' }}>Secondary Skills</label>
+                                <input className="input-field" value={form.secondary_skills} onChange={e => setForm(f => ({ ...f, secondary_skills: e.target.value }))} placeholder="e.g. Excel, Typing" />
                             </div>
-                        ))}
-                        <div className="flex gap-3">
-                            <button id="save-profile-btn" onClick={() => updateProfile.mutate(form)} className="btn-primary flex-1" disabled={updateProfile.isPending}>Save</button>
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5" style={{ color: 'hsl(220 20% 80%)' }}>Interests</label>
+                                <input className="input-field" value={form.interests} onChange={e => setForm(f => ({ ...f, interests: e.target.value }))} placeholder="e.g. Farming, Sales" />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                            <button id="save-profile-btn" onClick={() => {
+                                const payload = { ...form } as any;
+                                
+                                // Convert empty strings to null for optional backend fields
+                                Object.keys(payload).forEach(key => {
+                                    if (payload[key] === '') payload[key] = null;
+                                });
+
+                                const clean = (str: string) => (str || '').split(/[,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+                                payload.languages = clean(form.languages);
+                                payload.secondary_skills = clean(form.secondary_skills);
+                                payload.interests = clean(form.interests);
+                                if (payload.age) payload.age = parseInt(payload.age);
+                                updateProfile.mutate(payload);
+                            }} className="btn-primary flex-1" disabled={updateProfile.isPending}>Save</button>
                             <button onClick={() => setEditMode(false)} className="btn-ghost flex-1">Cancel</button>
                         </div>
                     </div>
                 )}
             </div>
+            
+            {/* Skills & Interests Section */}
+            <div className="card p-6">
+                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                    <Sparkles size={18} className="text-amber-400" />
+                    Skills & Interests
+                </h3>
+                <div className="space-y-6">
+                    <div>
+                        <p className="text-xs font-bold uppercase mb-2" style={{ color: 'hsl(220 15% 45%)' }}>Secondary Skills</p>
+                        <div className="flex flex-wrap gap-2">
+                            {profile?.secondary_skills?.length > 0 ? (
+                                profile.secondary_skills.map((s: string) => (
+                                    <span key={s} className="px-3 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-white capitalize">
+                                        {s}
+                                    </span>
+                                ))
+                            ) : (
+                                <p className="text-sm italic text-gray-500">No secondary skills added yet.</p>
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-xs font-bold uppercase mb-2" style={{ color: 'hsl(220 15% 45%)' }}>Interests</p>
+                        <div className="flex flex-wrap gap-2">
+                            {profile?.interests?.length > 0 ? (
+                                profile.interests.map((i: string) => (
+                                    <span key={i} className="px-3 py-1 rounded-full text-xs font-medium bg-white/5 border border-white/10 text-white capitalize">
+                                        {i}
+                                    </span>
+                                ))
+                            ) : (
+                                <p className="text-sm italic text-gray-500">No interests listed.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             {/* Resume Upload - Seeker Only */}
             {isSeekerRole && (

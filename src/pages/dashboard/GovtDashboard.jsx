@@ -13,7 +13,9 @@ import {
   ChevronRight,
   Filter,
   Download,
-  Calendar
+  Calendar,
+  LayoutDashboard,
+  ShieldCheck
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -55,13 +57,27 @@ const GovtDashboard = () => {
     }
   });
 
+  const { data: summary } = useQuery({
+    queryKey: ['dashboard-summary'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/dashboard/summary');
+        return data.data;
+      } catch (err) {
+        return null;
+      }
+    }
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">State Skill Analytics</h1>
+          <h1 className="text-3xl font-bold text-white">
+            Hello, {summary?.profile?.full_name?.split(' ')[0] || 'Official'}
+          </h1>
           <p className="text-gray-400 mt-1">Strategic oversight of regional employment and skilling trends.</p>
         </div>
         <div className="flex gap-3">
@@ -84,11 +100,11 @@ const GovtDashboard = () => {
           { label: 'Skill Gap Index', value: analytics?.gap_index || '0.42', icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', trend: '-2%' },
           { label: 'Revenue Impact', value: analytics?.revenue || '₹120Cr', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10', trend: '+8%' },
         ].map((stat, i) => (
-          <div key={i} className="bg-gray-900/60 border border-gray-800 p-6 rounded-2xl relative overflow-hidden group">
+          <div key={i} className="glass-card p-6 relative overflow-hidden group hover:border-white/20 transition-all cursor-default">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.bg} ${stat.color}`}>
               <stat.icon size={24} />
             </div>
-            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">{stat.label}</p>
+            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{stat.label}</p>
             <div className="flex items-end gap-3 mt-1">
               <p className="text-2xl font-bold text-white">{stat.value}</p>
               <span className={`text-[10px] font-bold mb-1 ${stat.trend.startsWith('+') ? 'text-emerald-400' : 'text-red-400'}`}>

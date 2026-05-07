@@ -1,122 +1,180 @@
 import React, { useState } from 'react';
 import { clsx } from 'clsx';
-import { Loader2 } from 'lucide-react';
+import { Check, PenLine } from 'lucide-react';
+import { Question } from '@/types/assessment';
 
 interface AnswerInputProps {
-  questionType: 'text' | 'mcq' | 'rating';
-  options: string[] | null;
-  onSubmit: (answer: string) => void;
-  isLoading: boolean;
+  question: Question;
+  value: string | string[];
+  onChange: (answer: string | string[]) => void;
+  disabled?: boolean;
 }
 
-export const AnswerInput: React.FC<AnswerInputProps> = ({ questionType, options, onSubmit, isLoading }) => {
-  const [textVal, setTextVal] = useState('');
-  const [selectedOpt, setSelectedOpt] = useState<string | null>(null);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+export const AnswerInput: React.FC<AnswerInputProps> = ({ question, value, onChange, disabled }) => {
+  const [otherText, setOtherText] = useState('');
+  const [showOtherInput, setShowOtherInput] = useState(false);
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (isLoading) return;
+  const isMulti = question.allows_multiple;
+  const hasOther = question.allows_other;
 
-    if (questionType === 'text' && textVal.length >= 10) {
-      onSubmit(textVal);
-    } else if (questionType === 'mcq' && selectedOpt) {
-      onSubmit(selectedOpt);
-    } else if (questionType === 'rating' && selectedRating) {
-      onSubmit(selectedRating.toString());
+  // Normalize value to array for uniform handling
+  const selectedValues: string[] = Array.isArray(value) ? value : (value ? [value] : []);
+
+  const isSelected = (opt: string) => selectedValues.includes(opt);
+  const isOtherSelected = selectedValues.some(v => !question.options?.includes(v) && v !== '');
+
+  const handleChipClick = (opt: string) => {
+    if (disabled) return;
+    if (isMulti) {
+      const next = isSelected(opt)
+        ? selectedValues.filter(v => v !== opt)
+        : [...selectedValues.filter(v => question.options?.includes(v) || (!question.options?.includes(v) && v !== opt)), opt];
+      onChange(next);
+    } else {
+      // Single select
+      if (isSelected(opt)) {
+        onChange([]);
+      } else {
+        // Remove any "other" text from selection when picking a chip
+        const withoutOther = [opt];
+        onChange(withoutOther);
+        setShowOtherInput(false);
+      }
     }
   };
 
-  const isSubmitDisabled = 
-    (questionType === 'text' && textVal.length < 10) ||
-    (questionType === 'mcq' && !selectedOpt) ||
-    (questionType === 'rating' && !selectedRating) ||
-    isLoading;
+  const handleOtherToggle = () => {
+    if (disabled) return;
+    if (showOtherInput) {
+      // Collapse and remove other text from selection
+      setShowOtherInput(false);
+      setOtherText('');
+      const cleaned = selectedValues.filter(v => question.options?.includes(v));
+      onChange(isMulti ? cleaned : (cleaned[0] || ''));
+    } else {
+      setShowOtherInput(true);
+    }
+  };
 
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {questionType === 'text' && (
-        <div className="flex flex-col gap-2">
-          <textarea
-            value={textVal}
-            onChange={(e) => setTextVal(e.target.value)}
-            disabled={isLoading}
-            className="w-full min-h-[120px] p-4 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:opacity-50"
-            placeholder="Share your thoughts here..."
-          />
-          {textVal.length > 5 && (
-            <div className="text-xs text-gray-500 text-right">
-              {textVal.length} characters (min 10)
-            </div>
-          )}
-        </div>
-      )}
+  const handleOtherTextChange = (text: string) => {
+    setOtherText(text);
+    const chipSelections = selectedValues.filter(v => question.options?.includes(v));
+    if (text.trim()) {
+      onChange(isMulti ? [...chipSelections, text.trim()] : text.trim());
+    } else {
+      onChange(isMulti ? chipSelections : '');
+    }
+  };
 
-      {questionType === 'mcq' && options && (
-        <div className="flex flex-col gap-3">
-          {options.map((opt) => (
+  // --- MCQ / Chip layout ---
+  if (question.question_type === 'mcq' && question.options) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap gap-2">
+          {question.options.map((opt) => {
+            const selected = isSelected(opt);
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => handleChipClick(opt)}
+                disabled={disabled}
+                className={clsx(
+                  'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border-2 transition-all duration-150 select-none',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  selected
+                    ? 'border-violet-600 bg-violet-600 text-white shadow-md shadow-violet-200'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-violet-300 hover:bg-violet-50'
+                )}
+              >
+                {selected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                {opt}
+              </button>
+            );
+          })}
+
+          {hasOther && (
             <button
-              key={opt}
               type="button"
-              onClick={() => setSelectedOpt(opt)}
-              disabled={isLoading}
+              onClick={handleOtherToggle}
+              disabled={disabled}
               className={clsx(
-                "w-full text-left p-4 rounded-lg border-2 transition-all font-medium disabled:opacity-50",
-                selectedOpt === opt 
-                  ? "border-blue-600 bg-blue-50 text-blue-900" 
-                  : "border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 text-gray-700"
+                'inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border-2 transition-all duration-150 select-none',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
+                showOtherInput || isOtherSelected
+                  ? 'border-orange-500 bg-orange-500 text-white shadow-md shadow-orange-200'
+                  : 'border-dashed border-gray-300 bg-white text-gray-500 hover:border-orange-400 hover:text-orange-600'
               )}
             >
-              {opt}
+              <PenLine className="w-3.5 h-3.5 shrink-0" />
+              Other
+            </button>
+          )}
+        </div>
+
+        {showOtherInput && (
+          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+            <input
+              type="text"
+              value={otherText}
+              onChange={(e) => handleOtherTextChange(e.target.value)}
+              disabled={disabled}
+              autoFocus
+              placeholder="Type your answer..."
+              className="w-full px-4 py-2.5 rounded-lg border-2 border-orange-300 bg-orange-50 focus:outline-none focus:border-orange-500 focus:bg-white text-sm text-gray-800 placeholder:text-gray-400 transition-all disabled:opacity-50"
+            />
+          </div>
+        )}
+
+        {isMulti && (
+          <p className="text-xs text-gray-400 mt-0.5">Select all that apply</p>
+        )}
+      </div>
+    );
+  }
+
+  // --- Rating layout ---
+  if (question.question_type === 'rating') {
+    const ratingVal = typeof value === 'string' ? parseInt(value) : 0;
+    const labels = ['Beginner', 'Basic', 'Intermediate', 'Advanced', 'Expert'];
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => onChange(num.toString())}
+              disabled={disabled}
+              className={clsx(
+                'flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border-2 font-bold text-sm transition-all duration-150 disabled:opacity-50',
+                ratingVal === num
+                  ? 'border-violet-600 bg-violet-600 text-white shadow-md'
+                  : 'border-gray-200 bg-white text-gray-600 hover:border-violet-300'
+              )}
+            >
+              <span className="text-lg">{num}</span>
             </button>
           ))}
         </div>
-      )}
-
-      {questionType === 'rating' && (
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between gap-2 sm:gap-4">
-            {[1, 2, 3, 4, 5].map((num) => (
-              <button
-                key={num}
-                type="button"
-                onClick={() => setSelectedRating(num)}
-                disabled={isLoading}
-                className={clsx(
-                  "flex-1 aspect-square max-h-[64px] rounded-lg border-2 flex items-center justify-center text-lg font-bold transition-all disabled:opacity-50",
-                  selectedRating === num
-                    ? "border-blue-600 bg-blue-600 text-white shadow-md scale-105"
-                    : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 text-gray-600"
-                )}
-              >
-                {num}
-              </button>
-            ))}
-          </div>
-          <div className="flex justify-between text-sm text-gray-500 px-1 font-medium">
-            <span>Not at all</span>
-            <span>Somewhat</span>
-            <span>Very much</span>
-          </div>
+        <div className="flex justify-between text-xs text-gray-400 px-1">
+          {labels.map(l => <span key={l}>{l}</span>)}
         </div>
-      )}
-
-      <div className="mt-4 flex justify-end">
-        <button
-          type="submit"
-          disabled={isSubmitDisabled}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Saving...</span>
-            </>
-          ) : (
-            <span>Next →</span>
-          )}
-        </button>
       </div>
-    </form>
+    );
+  }
+
+  // --- Text fallback ---
+  return (
+    <div className="flex flex-col gap-2">
+      <textarea
+        value={typeof value === 'string' ? value : ''}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        rows={3}
+        placeholder="Share your thoughts..."
+        className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-violet-500 focus:bg-white text-sm text-gray-800 placeholder:text-gray-400 transition-all resize-none disabled:opacity-50"
+      />
+    </div>
   );
 };

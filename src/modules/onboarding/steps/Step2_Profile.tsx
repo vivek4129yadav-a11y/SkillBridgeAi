@@ -7,7 +7,7 @@ const EDUCATION_LEVELS = [
     { value: 'primary', label: 'Primary (up to 5th)' },
     { value: 'secondary', label: 'Secondary (10th/12th)' },
     { value: 'graduate', label: 'Graduate (B.Tech / B.Sc etc.)' },
-    { value: 'postgrad', label: 'Post Graduate' },
+    { value: 'postgraduate', label: 'Post Graduate' },
 ]
 
 interface Props {

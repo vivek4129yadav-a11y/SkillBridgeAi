@@ -56,7 +56,7 @@ const SeekerDashboard = () => {
   };
 
   // Extract data from summary
-  const completionData = summary ? { score: summary.profile_completion_pct } : null;
+  const completionData = summary ? { score: summary.profile?.profile_complete_percentage || 0 } : null;
   const skillGaps = summary?.ai_highlight; // Backend uses ai_highlight for the punchy sentence
   const jobs = summary?.job_matches || [];
   const courses = summary?.recommended_courses || [];
@@ -106,7 +106,7 @@ const SeekerDashboard = () => {
       {/* Header & Profile Completion */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Hello, {summary?.user?.name?.split('@')[0]}</h1>
+          <h1 className="text-3xl font-bold text-white">Hello, {summary?.profile?.full_name?.split(' ')[0] || summary?.profile?.email?.split('@')[0]}</h1>
           <div className="flex items-center gap-3 mt-2">
             <p className="text-gray-400 text-sm">Role: <span className="text-indigo-400 font-medium">{summary?.primary_role || getRoleLabel()}</span></p>
             {summary?.experience_years !== undefined && (

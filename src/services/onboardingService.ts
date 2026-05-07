@@ -81,9 +81,9 @@ export const onboardingService = {
   submitStudentOnboarding: async (data: StudentOnboardingData) => {
     // Map frontend fields to backend schema expectations
     const locationMap: Record<string, string> = {
-      'same city': 'Same City',
-      'same state': 'State',
-      'anywhere': 'Anywhere'
+      'same_city': 'same_city',
+      'state': 'state',
+      'anywhere': 'anywhere'
     };
 
     const backendData = {

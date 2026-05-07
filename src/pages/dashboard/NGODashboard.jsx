@@ -13,7 +13,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Activity,
-  BarChart2
+  BarChart2,
+  LayoutDashboard,
+  Sparkles
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -55,13 +57,27 @@ const NGODashboard = () => {
     }
   });
 
+  const { data: summary } = useQuery({
+    queryKey: ['dashboard-summary'],
+    queryFn: async () => {
+      try {
+        const { data } = await api.get('/dashboard/summary');
+        return data.data;
+      } catch (err) {
+        return null;
+      }
+    }
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">NGO Impact Dashboard</h1>
+          <h1 className="text-3xl font-bold text-white">
+            Hello, {summary?.profile?.full_name?.split(' ')[0] || 'Partner'}
+          </h1>
           <p className="text-gray-400 mt-1">Track beneficiary progress and regional skilling outcomes.</p>
         </div>
         <div className="flex gap-3">
@@ -84,12 +100,14 @@ const NGODashboard = () => {
           { label: 'Avg. Income Increase', value: outcomes?.income_boost || '+35%', icon: TrendingUp, color: 'text-amber-400', bg: 'bg-amber-500/10' },
           { label: 'Active Districts', value: skillGaps?.length || '12', icon: Map, color: 'text-purple-400', bg: 'bg-purple-500/10' },
         ].map((stat, i) => (
-          <div key={i} className="bg-gray-900/60 border border-gray-800 p-6 rounded-2xl">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.bg} ${stat.color}`}>
+          <div key={i} className="glass-card p-6 flex items-center gap-4 hover:border-white/20 transition-all cursor-default">
+            <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
               <stat.icon size={24} />
             </div>
-            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">{stat.label}</p>
-            <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+            <div>
+              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">{stat.label}</p>
+              <p className="text-2xl font-bold text-white mt-0.5">{stat.value}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -99,16 +117,16 @@ const NGODashboard = () => {
         <div className="lg:col-span-8 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Activity size={22} className="text-indigo-400" />
+              <LayoutDashboard size={22} className="text-indigo-400" />
               Beneficiary Progress
             </h2>
-            <div className="flex items-center bg-gray-900 border border-gray-800 rounded-xl px-3 py-1.5">
+            <div className="flex items-center bg-gray-900/80 border border-gray-800 rounded-xl px-3 py-1.5 focus-within:border-indigo-500/50 transition-all">
               <Search size={16} className="text-gray-500" />
               <input type="text" placeholder="Search name..." className="bg-transparent border-none text-xs text-white focus:ring-0 w-32" />
             </div>
           </div>
 
-          <div className="bg-gray-900/40 border border-gray-800 rounded-3xl overflow-hidden">
+          <div className="glass-card overflow-hidden">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-800/50 text-[10px] uppercase font-bold text-gray-500 tracking-wider">

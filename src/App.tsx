@@ -40,6 +40,7 @@ import { GapAnalysisPage } from '@/modules/gap_analysis/GapAnalysisPage'
 import { ResourcesAdmin } from '@/modules/admin/ResourcesAdmin'
 import ResumeAnalysisPage from '@/pages/ResumeAnalysisPage'
 import { SEEKER_ROLES } from '@/constants/roles'
+import { Toaster } from '@/components/layout/Toaster'
 
 // Simple guard — redirect to /login if not logged in
 function Protected({ children }: { children: React.ReactNode }) {
@@ -76,6 +77,7 @@ function DashboardResolver() {
 export default function App() {
     return (
         <BrowserRouter>
+            <Toaster />
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
