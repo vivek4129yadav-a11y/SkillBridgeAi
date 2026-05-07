@@ -6,9 +6,15 @@ interface RetakeNoticeProps {
   retriesUsed: number;
   maxRetakes: number;
   nextAvailableAt: string | null;
+  lastCompletedAt?: string | null;
 }
 
-export const RetakeNotice: React.FC<RetakeNoticeProps> = ({ retriesUsed, maxRetakes, nextAvailableAt }) => {
+export const RetakeNotice: React.FC<RetakeNoticeProps> = ({ 
+  retriesUsed, 
+  maxRetakes, 
+  nextAvailableAt,
+  lastCompletedAt 
+}) => {
   const remaining = Math.max(0, maxRetakes - retriesUsed);
   const total = maxRetakes + 1;
   const isLast = remaining === 0 && !nextAvailableAt;
@@ -40,8 +46,21 @@ export const RetakeNotice: React.FC<RetakeNoticeProps> = ({ retriesUsed, maxReta
   }
 
   return (
-    <div className="bg-gray-50 border border-gray-200 text-gray-600 rounded-lg p-3 mb-6 flex justify-center text-sm font-medium">
-       Attempt {retriesUsed + 1} of {total} <span className="mx-2">•</span> {remaining} retake(s) remaining
+    <div className="space-y-4 mb-6">
+      <div className="bg-gray-50 border border-gray-200 text-gray-600 rounded-lg p-3 flex justify-center text-sm font-medium">
+         Attempt {retriesUsed + 1} of {total} <span className="mx-2">•</span> {remaining} retake(s) remaining
+      </div>
+      
+      {lastCompletedAt && (
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Last assessment completed on {new Date(lastCompletedAt).toLocaleDateString(undefined, {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          })}</span>
+        </div>
+      )}
     </div>
   );
 };

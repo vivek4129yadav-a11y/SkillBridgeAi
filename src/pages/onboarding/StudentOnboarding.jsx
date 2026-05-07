@@ -82,14 +82,15 @@ const StudentOnboarding = () => {
     setError(null);
 
     try {
-      await onboardingService.submitStudentOnboarding(formData);
+      const result = await onboardingService.submitStudentOnboarding(formData);
       
-      const { user } = useAuthStore.getState();
-      if (user) {
-        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      if (result?.onboarding_done) {
+        navigate('/dashboard');
+      } else {
+        // If not fully done (e.g. need AI interview), we still go to dashboard 
+        // where the user will see a progress bar or prompt.
+        navigate('/dashboard');
       }
-
-      navigate('/dashboard');
     } catch (err) {
       const detail = err.response?.data?.detail;
       let errorMessage = 'Failed to complete onboarding. Please try again.';

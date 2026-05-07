@@ -86,6 +86,23 @@ export default function DashboardPage() {
                             <ChevronRight size={18} className="text-indigo-400" />
                         </div>
                     )}
+
+                    {data.gap_analysis_done && data.gap_analysis_stale && (
+                        <div id="gap-stale-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99]"
+                            style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(185,28,28,0.1))', border: '1px solid rgba(239,68,68,0.3)' }}
+                            onClick={() => navigate('/gap-analysis?rerun=true')}>
+                            <div className="flex items-center gap-4">
+                                <div className="p-2.5 rounded-xl bg-red-500/20 text-red-400">
+                                    <AlertTriangle size={20} />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-white text-sm">Gap Analysis is Outdated</p>
+                                    <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Your skills have changed since your last report. Recalculate now.</p>
+                                </div>
+                            </div>
+                            <ChevronRight size={18} className="text-red-400" />
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -116,11 +133,24 @@ export default function DashboardPage() {
 
                 {/* Extracted Skills */}
                 <div className="card p-6">
-                    <p className="text-sm font-medium mb-4" style={{ color: 'hsl(220 15% 55%)' }}>Identified Skills</p>
+                    <div className="flex justify-between items-start mb-4">
+                        <p className="text-sm font-medium" style={{ color: 'hsl(220 15% 55%)' }}>Identified Skills</p>
+                        {data.last_assessment_at && (
+                            <span className="text-[10px] text-gray-500 flex items-center gap-1">
+                                <Clock size={10} />
+                                {new Date(data.last_assessment_at).toLocaleDateString()}
+                            </span>
+                        )}
+                    </div>
                     <div id="skills-extracted" className="flex flex-wrap gap-2">
                         {data.extracted_skills.length > 0
                             ? data.extracted_skills.map(skill => (
-                                <span key={skill} className="badge" style={{ background: 'rgba(99,102,241,0.1)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)' }}>{skill}</span>
+                                <div key={skill.name} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg" 
+                                    style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                                    <span className="text-xs font-semibold text-indigo-200">{skill.name}</span>
+                                    <span className="w-1 h-1 rounded-full bg-indigo-500/40" />
+                                    <span className="text-[10px] text-indigo-400 font-medium uppercase tracking-wider">{skill.proficiency}</span>
+                                </div>
                             ))
                             : <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>Complete the assessment to extract skills.</p>
                         }

@@ -41,24 +41,35 @@ export const AssessmentComplete: React.FC<AssessmentCompleteProps> = ({
       )}
 
       {assessmentSummary && (
-        <div className="bg-gray-50 rounded-xl p-5 mb-8 text-left border border-gray-100 shadow-inner">
-          <p className="text-gray-700 italic">"{assessmentSummary}"</p>
+        <div className="bg-violet-50 rounded-2xl p-6 mb-8 text-left border border-violet-100 shadow-inner relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <span className="text-6xl font-serif">"</span>
+          </div>
+          <h4 className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-2">Your Career Snapshot</h4>
+          <p className="text-gray-700 italic leading-relaxed relative z-10">"{assessmentSummary}"</p>
         </div>
       )}
       
-      <div className="flex flex-col gap-4 max-w-sm mx-auto">
+      <div className="flex flex-col gap-4 max-w-md mx-auto">
+        <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 text-left mb-2">
+          <h4 className="text-sm font-bold text-blue-900 mb-1">What's Next?</h4>
+          <p className="text-xs text-blue-700 leading-relaxed">
+            Your skills are now synchronized. We've updated your <strong>Gap Analysis</strong> to show exactly where you stand against your target roles and what's missing.
+          </p>
+        </div>
+
         <Link 
           to="/gap-analysis" 
-          className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg focus:ring-4 focus:ring-blue-200"
+          className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-violet-600 text-white rounded-xl font-bold hover:bg-violet-700 transition-all shadow-lg shadow-violet-200 hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0"
         >
-          View Your Gap Analysis <ChevronRight className="w-5 h-5" />
+          Explore Gap Analysis <ChevronRight className="w-5 h-5" />
         </Link>
         
         <Link 
           to="/dashboard" 
-          className="flex items-center justify-center gap-2 text-gray-500 hover:text-gray-800 font-medium py-2 transition-colors"
+          className="flex items-center justify-center gap-2 text-gray-500 hover:text-violet-600 font-semibold py-2 transition-colors text-sm"
         >
-          <LayoutDashboard className="w-4 h-4" /> Go to Dashboard
+          <LayoutDashboard className="w-4 h-4" /> Return to Dashboard
         </Link>
       </div>
     </div>

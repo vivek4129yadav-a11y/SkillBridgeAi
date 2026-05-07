@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGapReport, useRunGapAnalysis } from '@/hooks/useGapAnalysis';
 import { ReportHeader } from './ReportHeader';
 import { StrengthsSection } from './StrengthsSection';
@@ -10,8 +10,18 @@ import { Loader2, Info } from 'lucide-react';
 
 export const GapAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: report, isLoading, error } = useGapReport();
   const { mutate: runAnalysis, isPending: isRerunning } = useRunGapAnalysis();
+
+  const hasTriggeredRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (searchParams.get('rerun') === 'true' && !hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
+      runAnalysis();
+    }
+  }, [searchParams, runAnalysis]);
 
   const handleRerun = () => {
     runAnalysis();

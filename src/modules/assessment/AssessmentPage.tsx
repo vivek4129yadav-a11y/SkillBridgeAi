@@ -134,6 +134,7 @@ export const AssessmentPage: React.FC = () => {
             retriesUsed={status.retakes_used}
             maxRetakes={status.max_retakes}
             nextAvailableAt={status.next_retake_available_at}
+            lastCompletedAt={status.last_completed_at}
           />
         )}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center animate-in fade-in duration-500">
@@ -179,6 +180,7 @@ export const AssessmentPage: React.FC = () => {
           retriesUsed={status.retakes_used}
           maxRetakes={status.max_retakes}
           nextAvailableAt={status.next_retake_available_at}
+          lastCompletedAt={status.last_completed_at}
         />
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center animate-in zoom-in-95 duration-500">
           <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-3">
@@ -223,6 +225,20 @@ export const AssessmentPage: React.FC = () => {
 
   return (
     <div className="max-w-[720px] mx-auto pt-8 px-4 pb-16">
+      {/* Progress bar */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-xs font-bold text-violet-600 uppercase tracking-wider">Overall Progress</span>
+          <span className="text-xs font-bold text-gray-400">{Math.round(((questionOffset) / 11) * 100)}%</span>
+        </div>
+        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden border border-gray-50">
+          <div 
+            className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-1000 ease-out rounded-full shadow-[0_0_8px_rgba(139,92,246,0.3)]"
+            style={{ width: `${((questionOffset) / 11) * 100}%` }}
+          />
+        </div>
+      </div>
+
       <PhaseIndicator currentPhase={session.phase} completedPhases={completedPhases} />
 
       {quotaExceeded && (

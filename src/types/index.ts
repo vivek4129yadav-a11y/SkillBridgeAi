@@ -80,13 +80,21 @@ export interface Job {
 }
 
 // --- Dashboard ---
+export interface Skill {
+    name: string
+    proficiency: string
+    level: number
+}
+
 export interface DashboardData {
     user: { name: string; user_type: string | null; preferred_lang: string }
     profile_completion_pct: number
     onboarding_done: boolean
     quick_assessment_done: boolean
     gap_analysis_done: boolean
-    extracted_skills: string[]
+    gap_analysis_stale: boolean
+    last_assessment_at: string | null
+    extracted_skills: Skill[]
     career_interests: string[]
     location: { state: string | null; city: string | null }
     job_matches: Partial<Job>[]

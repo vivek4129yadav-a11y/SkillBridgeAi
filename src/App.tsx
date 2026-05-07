@@ -41,6 +41,7 @@ import { ResourcesAdmin } from '@/modules/admin/ResourcesAdmin'
 import ResumeAnalysisPage from '@/pages/ResumeAnalysisPage'
 import { SEEKER_ROLES } from '@/constants/roles'
 import { Toaster } from '@/components/layout/Toaster'
+import LandingPage from '@/pages/LandingPage'
 
 // Simple guard — redirect to /login if not logged in
 function Protected({ children }: { children: React.ReactNode }) {
@@ -79,6 +80,7 @@ export default function App() {
         <BrowserRouter>
             <Toaster />
             <Routes>
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/verify-otp" element={<VerifyOTPPage />} />
@@ -96,8 +98,7 @@ export default function App() {
                 <Route path="/admin/resources" element={<ResourcesAdmin />} />
 
                 {/* Authenticated pages — wrapped in AppLayout (sidebar + topbar) */}
-                <Route path="/" element={<Protected><AppLayout /></Protected>}>
-                    <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route element={<Protected><AppLayout /></Protected>}>
                     <Route path="dashboard" element={<DashboardResolver />} />
                     
                     {/* Employer Specific Routes */}

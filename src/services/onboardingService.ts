@@ -79,158 +79,92 @@ export interface GovtOnboardingData {
 
 export const onboardingService = {
   submitStudentOnboarding: async (data: StudentOnboardingData) => {
-    // Map frontend fields to backend schema expectations
-    const locationMap: Record<string, string> = {
-      'same_city': 'same_city',
-      'state': 'state',
-      'anywhere': 'anywhere'
-    };
+    // Send data as is, backend handles mapping
+    const response = await api.post(`/onboarding/student?step=5`, data);
+    const result = response.data.data;
 
-    const backendData = {
-      full_name: data.full_name,
-      age: data.age,
-      gender: data.gender,
-      state: data.state,
-      city: data.city,
-      preferred_job_location: locationMap[data.preferred_location] || 'Anywhere',
-      education_level: data.education_level,
-      stream: data.stream,
-      institution_name: data.college_name,
-      career_interests: data.career_interests,
-      languages_known: data.languages
-    };
-    
-    // Using step=5 to indicate completion of the 5-step process
-    const response = await api.post(`/onboarding/student?step=5`, backendData);
-    if (response.data?.success) {
+    if (result?.onboarding_done) {
       const { user } = useAuthStore.getState();
       if (user) {
         useAuthStore.setState({ user: { ...user, onboarding_done: true } });
       }
     }
     
-    return response.data;
+    return result;
   },
 
   submitBlueCollarOnboarding: async (data: BlueCollarOnboardingData) => {
-    // Map frontend fields to backend schema expectations
-    const backendData = {
-      full_name: data.full_name,
-      age: data.age,
-      gender: data.gender,
-      state: data.state,
-      city: data.city,
-      village_district: data.village_district,
-      primary_trade: data.primary_trade,
-      secondary_skills: data.secondary_skills,
-      years_experience: data.years_experience,
-      is_currently_employed: data.currently_employed,
-      preferred_work_radius: data.work_radius,
-      languages_known: data.languages,
-      owns_smartphone: data.owns_smartphone
-    };
-
-    // Using step=5 to indicate final step for blue collar onboarding
-    const response = await api.post(`/onboarding/blue_collar?step=5`, backendData);
+    const response = await api.post(`/onboarding/blue_collar?step=5`, data);
+    const result = response.data.data;
     
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    if (result?.onboarding_done) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
-    return response.data;
+    return result;
   },
 
   submitInformalWorkerOnboarding: async (data: InformalWorkerOnboardingData) => {
-    // Map frontend fields to backend schema expectations
-    const backendData = {
-      full_name: data.full_name,
-      age: data.age,
-      gender: data.gender,
-      state: data.state,
-      city_village: data.city_village,
-      current_work_type: data.work_type,
-      monthly_income: data.monthly_income,
-      digital_literacy: data.digital_literacy,
-      owns_smartphone: data.owns_smartphone,
-      languages_known: data.languages,
-      interests: data.goals
-    };
-
-    const response = await api.post(`/onboarding/informal_worker`, backendData);
+    const response = await api.post(`/onboarding/informal_worker`, data);
+    const result = response.data.data;
     
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    if (result?.onboarding_done) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
-    return response.data;
+    return result;
   },
 
   submitEmployerOnboarding: async (data: EmployerOnboardingData) => {
-    const backendData = {
-      contact_person_name: data.contact_name,
-      designation: data.designation,
-      company_name: data.company_name,
-      industry_sector: data.industry,
-      company_size: data.company_size,
-      state: data.state,
-      city: data.city,
-      roles_hiring_for: data.hiring_roles,
-      preferred_skills: data.candidate_skills,
-      work_type_offered: data.work_type
-    };
-    const response = await api.post(`/onboarding/employer`, backendData);
+    const response = await api.post(`/onboarding/employer`, data);
+    const result = response.data.data;
     
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    if (result?.onboarding_done) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
-    return response.data;
+    return result;
   },
 
   submitNgoOnboarding: async (data: NgoOnboardingData) => {
-    const backendData = {
-      org_name: data.org_name,
-      registration_number: data.reg_number,
-      focus_sectors: data.focus_sectors,
-      coverage_areas: data.coverage_areas,
-      beneficiary_types: data.beneficiary_types,
-      contact_name: data.contact_name,
-      contact_designation: data.contact_designation
-    };
-    const response = await api.post(`/onboarding/ngo`, backendData);
+    const response = await api.post(`/onboarding/ngo`, data);
+    const result = response.data.data;
     
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    if (result?.onboarding_done) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
-    return response.data;
+    return result;
   },
 
   submitGovtOnboarding: async (data: GovtOnboardingData) => {
-    const backendData = {
-      full_name: data.full_name,
-      designation: data.designation,
-      department: data.department,
-      access_level: data.access_level || 'State',
-      state_jurisdiction: data.state_jurisdiction,
-      district_jurisdiction: data.district_jurisdiction
-    };
-    const response = await api.post(`/onboarding/government`, backendData);
+    const response = await api.post(`/onboarding/government`, data);
+    const result = response.data.data;
     
-    if (response.data) {
-      useAuthStore.setState((state) => ({
-        user: state.user ? { ...state.user, onboarding_done: true } : null,
-      }));
+    if (result?.onboarding_done) {
+      const { user } = useAuthStore.getState();
+      if (user) {
+        useAuthStore.setState({ user: { ...user, onboarding_done: true } });
+      }
     }
     
-    return response.data;
+    return result;
   },
+
+  getOnboardingState: async () => {
+    const response = await api.get('/onboarding/state');
+    return response.data.data;
+  }
 };
