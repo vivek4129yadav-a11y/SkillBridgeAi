@@ -76,11 +76,12 @@ function DashboardResolver() {
 }
 
 export default function App() {
+    const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
     return (
         <BrowserRouter>
             <Toaster />
             <Routes>
-                <Route path="/" element={<LandingPage />} />
+                <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/verify-otp" element={<VerifyOTPPage />} />

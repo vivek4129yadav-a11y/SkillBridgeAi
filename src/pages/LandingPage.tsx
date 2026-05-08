@@ -17,6 +17,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import './LandingPage.css';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const LandingPage = () => {
   const [jobCounter, setJobCounter] = useState(0);
   const [activePersona, setActivePersona] = useState<number | null>(null);
   const [hoveredLetter, setHoveredLetter] = useState<number | null>(null);
+  const [activeChart, setActiveChart] = useState<'demand' | 'skills'>('demand');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Scroll handler for Navbar
@@ -264,849 +266,21 @@ const LandingPage = () => {
 
   return (
     <div className="landing-container">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-
-        :root {
-          --bg-primary: #0A0A0B;
-          --bg-card: #111114;
-          --bg-card-hover: #161619;
-          --accent-saffron: #FF9933;
-          --accent-teal: #00D4AA;
-          --accent-saffron-dim: rgba(255,153,51,0.15);
-          --text-primary: #FFFFFF;
-          --text-secondary: #888891;
-          --text-muted: #444449;
-          --border-subtle: rgba(255,255,255,0.08);
-          --border-accent: rgba(255,153,51,0.4);
-        }
-
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          scroll-behavior: smooth;
-        }
-
-        body {
-          background: var(--bg-primary);
-          color: var(--text-primary);
-          font-family: 'Noto Sans', sans-serif;
-          overflow-x: hidden;
-        }
-
-        .bebas { font-family: 'Bebas Neue', cursive; }
-        
-        .landing-container {
-          min-height: 100vh;
-        }
-
-        /* Animations */
-        .animate-on-scroll {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .animate-on-scroll.reveal {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        /* Navbar */
-        .navbar {
-          position: fixed;
-          top: 0;
-          width: 100%;
-          padding: 1.5rem 5%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          z-index: 1000;
-          transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled {
-          background: rgba(10, 10, 11, 0.9);
-          backdrop-filter: blur(10px);
-          padding: 1rem 5%;
-          border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .logo {
-          font-size: 1.5rem;
-          color: white;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        .logo span { color: var(--accent-saffron); }
-
-        .nav-btn {
-          background: var(--accent-saffron);
-          color: black;
-          padding: 0.75rem 1.5rem;
-          border-radius: 4px;
-          font-weight: bold;
-          text-decoration: none;
-          transition: all 0.2s ease;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .nav-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 20px rgba(255, 153, 51, 0.3);
-        }
-
-        /* Hero */
-        .hero {
-          height: 100vh;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          padding: 0 5%;
-          overflow: hidden;
-        }
-
-        .hero-canvas {
-          position: absolute;
-          top: 0;
-          left: 0;
-          z-index: -1;
-          opacity: 0.6;
-        }
-
-        .hero-grain {
-          position: absolute;
-          inset: 0;
-          background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-          opacity: 0.05;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .hero-content {
-          z-index: 1;
-        }
-
-        .hero-pre {
-          color: var(--accent-saffron);
-          letter-spacing: 0.3em;
-          font-size: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .hero-title {
-          font-size: clamp(3rem, 10vw, 7.5rem);
-          line-height: 0.9;
-          margin-bottom: 1.5rem;
-          color: white;
-        }
-
-        .hero-sub {
-          color: var(--text-secondary);
-          font-style: italic;
-          max-width: 600px;
-          margin-bottom: 3rem;
-        }
-
-        .counters {
-          display: flex;
-          gap: 4rem;
-          margin-bottom: 4rem;
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-
-        .counter-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .counter-label {
-          color: var(--text-muted);
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          margin-bottom: 0.5rem;
-        }
-
-        .counter-value {
-          font-family: monospace;
-          font-size: 2.5rem;
-          color: var(--accent-saffron);
-        }
-
-        .hero-cta {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .cta-main {
-          background: var(--accent-saffron);
-          color: black;
-          padding: 1.25rem 2.5rem;
-          font-size: 1.25rem;
-          font-weight: 800;
-          border-radius: 4px;
-          text-decoration: none;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .cta-main:hover {
-          transform: scale(1.05);
-          box-shadow: 0 0 40px rgba(255, 153, 51, 0.4);
-        }
-
-        .cta-sub {
-          color: var(--text-muted);
-          font-size: 0.75rem;
-        }
-
-        .scroll-indicator {
-          position: absolute;
-          bottom: 2rem;
-          animation: bounce 2s infinite;
-          color: var(--text-muted);
-        }
-
-        @keyframes bounce {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-10px); }
-          60% { transform: translateY(-5px); }
-        }
-
-        /* Data Wall */
-        .data-wall {
-          padding: 8rem 5%;
-          border-top: 1px solid var(--border-subtle);
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 4rem;
-          margin-bottom: 6rem;
-        }
-
-        .stat-card {
-          text-align: center;
-        }
-
-        .stat-num {
-          font-size: 5rem;
-          color: var(--accent-saffron);
-          margin-bottom: 1rem;
-        }
-
-        .stat-label {
-          color: var(--text-secondary);
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          font-size: 0.875rem;
-        }
-
-        .quote-block {
-          max-width: 800px;
-          margin: 0 auto;
-          padding-left: 2rem;
-          border-left: 4px solid var(--accent-saffron);
-          margin-bottom: 6rem;
-        }
-
-        .quote-text {
-          font-size: 1.5rem;
-          line-height: 1.6;
-          margin-bottom: 1rem;
-        }
-
-        .quote-author {
-          color: var(--text-muted);
-          font-size: 0.875rem;
-        }
-
-        .ticker-wrap {
-          width: 100%;
-          overflow: hidden;
-          background: rgba(255, 153, 51, 0.03);
-          padding: 1.5rem 0;
-          border-top: 1px solid var(--border-subtle);
-          border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .ticker {
-          display: flex;
-          white-space: nowrap;
-          animation: ticker 30s linear infinite;
-        }
-
-        .ticker span {
-          font-family: 'Bebas Neue';
-          font-size: 1.25rem;
-          color: var(--accent-saffron);
-          margin-right: 4rem;
-          opacity: 0.8;
-        }
-
-        @keyframes ticker {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-
-        /* Identity Mirror */
-        .identity-section {
-          padding: 8rem 5%;
-        }
-
-        .section-header {
-          margin-bottom: 4rem;
-        }
-
-        .section-title {
-          font-size: 4rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .section-sub {
-          color: var(--text-secondary);
-        }
-
-        .persona-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-
-        .persona-card {
-          height: 350px;
-          perspective: 1000px;
-          cursor: pointer;
-        }
-
-        .persona-inner {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          transition: transform 0.8s;
-          transform-style: preserve-3d;
-          border: 1px solid var(--border-subtle);
-          border-radius: 8px;
-          background: var(--bg-card);
-        }
-
-        .persona-card:hover .persona-inner {
-          transform: rotateY(180deg);
-          border-color: var(--accent-saffron);
-          box-shadow: 0 0 30px rgba(255, 153, 51, 0.15);
-        }
-
-        .persona-card.active .persona-inner {
-          border-color: var(--accent-saffron);
-          box-shadow: 0 0 30px rgba(255, 153, 51, 0.3);
-        }
-
-        .persona-front, .persona-back {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          padding: 2.5rem;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .persona-back {
-          transform: rotateY(180deg);
-          background: var(--bg-card-hover);
-        }
-
-        .persona-name {
-          font-size: 1.5rem;
-          margin-top: 1.5rem;
-          margin-bottom: 0.25rem;
-        }
-
-        .persona-city {
-          color: var(--text-muted);
-          font-size: 0.875rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .persona-pain {
-          font-size: 1rem;
-          line-height: 1.6;
-          color: var(--text-secondary);
-        }
-
-        .back-title {
-          font-family: 'Bebas Neue';
-          color: var(--accent-teal);
-          font-size: 1.25rem;
-          margin-bottom: 1rem;
-        }
-
-        .back-item {
-          margin-bottom: 1.5rem;
-        }
-
-        .back-label {
-          font-size: 0.75rem;
-          color: var(--text-muted);
-          text-transform: uppercase;
-          display: block;
-          margin-bottom: 0.25rem;
-        }
-
-        .back-value {
-          font-size: 0.9rem;
-          line-height: 1.4;
-        }
-
-        .persona-cta {
-          margin-top: auto;
-          color: var(--accent-saffron);
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        /* Bento Grid */
-        .feature-section {
-          padding: 8rem 5%;
-          background: rgba(255, 255, 255, 0.01);
-        }
-
-        .bento-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          grid-auto-rows: minmax(200px, auto);
-          gap: 1.5rem;
-          margin-top: 4rem;
-        }
-
-        .feature-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border-subtle);
-          border-radius: 12px;
-          padding: 2rem;
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .feature-card:hover {
-          border-color: var(--border-accent);
-          background: var(--bg-card-hover);
-        }
-
-        .feature-card.large {
-          grid-column: span 2;
-        }
-
-        .feature-icon {
-          color: var(--accent-saffron);
-          margin-bottom: 1.5rem;
-        }
-
-        .feature-title {
-          font-size: 1.25rem;
-          margin-bottom: 0.75rem;
-        }
-
-        .feature-desc {
-          color: var(--text-secondary);
-          font-size: 0.9rem;
-          line-height: 1.6;
-        }
-
-        .feature-badge {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          background: var(--accent-saffron-dim);
-          color: var(--accent-saffron);
-          font-size: 0.7rem;
-          padding: 2px 8px;
-          border-radius: 4px;
-          text-transform: uppercase;
-        }
-
-        /* Timeline */
-        .timeline-section {
-          padding: 8rem 5%;
-        }
-
-        .timeline {
-          margin-top: 6rem;
-          position: relative;
-          display: flex;
-          justify-content: space-between;
-          gap: 2rem;
-        }
-
-        .timeline-line {
-          position: absolute;
-          top: 30px;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          border-top: 2px dashed var(--border-subtle);
-          z-index: 0;
-        }
-
-        .timeline-step {
-          position: relative;
-          z-index: 1;
-          flex: 1;
-          text-align: center;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .step-num {
-          width: 60px;
-          height: 60px;
-          background: var(--bg-primary);
-          border: 2px solid var(--accent-saffron);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.5rem;
-          color: var(--accent-saffron);
-          margin-bottom: 1.5rem;
-          box-shadow: 0 0 20px var(--accent-saffron-dim);
-        }
-
-        .step-title {
-          font-size: 1.125rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .step-desc {
-          color: var(--text-secondary);
-          font-size: 0.875rem;
-          max-width: 200px;
-        }
-
-        /* Urgency Section */
-        .urgency-section {
-          padding: 8rem 5%;
-          display: flex;
-          gap: 6rem;
-          align-items: center;
-          background: black;
-        }
-
-        .urgency-left {
-          flex: 1.2;
-        }
-
-        .urgency-title {
-          font-size: clamp(3rem, 6vw, 5rem);
-          line-height: 1;
-        }
-
-        .urgency-right {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .urgency-pill {
-          background: var(--bg-card);
-          padding: 1.5rem;
-          border-radius: 8px;
-          border-left: 4px solid var(--accent-saffron);
-          font-size: 1rem;
-          color: var(--text-secondary);
-        }
-
-        /* Pricing */
-        .pricing-section {
-          padding: 8rem 5%;
-        }
-
-        .pricing-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          margin-top: 4rem;
-        }
-
-        .pricing-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border-subtle);
-          padding: 3rem;
-          border-radius: 12px;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .pricing-card.featured {
-          border-color: var(--accent-saffron);
-          transform: scale(1.05);
-          box-shadow: 0 0 50px rgba(255, 153, 51, 0.1);
-        }
-
-        .price-title {
-          font-size: 2rem;
-          margin-bottom: 0.5rem;
-        }
-
-        .price-tag {
-          font-size: 1.5rem;
-          color: var(--accent-saffron);
-          margin-bottom: 2rem;
-        }
-
-        .price-list {
-          list-style: none;
-          margin-bottom: 3rem;
-          flex-grow: 1;
-        }
-
-        .price-list li {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 1rem;
-          color: var(--text-secondary);
-        }
-
-        .price-btn {
-          width: 100%;
-          padding: 1rem;
-          border-radius: 4px;
-          text-align: center;
-          text-decoration: none;
-          font-weight: bold;
-          transition: all 0.2s ease;
-        }
-
-        .price-btn.saffron {
-          background: var(--accent-saffron);
-          color: black;
-        }
-
-        .price-btn.outline {
-          border: 1px solid var(--border-subtle);
-          color: white;
-        }
-
-        /* Trust Section */
-        .trust-section {
-          padding: 4rem 5%;
-          text-align: center;
-          border-top: 1px solid var(--border-subtle);
-        }
-
-        .badges {
-          display: flex;
-          justify-content: center;
-          gap: 3rem;
-          margin-top: 2rem;
-          flex-wrap: wrap;
-        }
-
-        .badge-pill {
-          padding: 0.75rem 1.5rem;
-          background: var(--bg-card);
-          border-radius: 100px;
-          border: 1px solid var(--border-subtle);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-weight: 600;
-          font-size: 0.875rem;
-        }
-
-        .stamp {
-          display: inline-block;
-          margin-top: 4rem;
-          padding: 0.5rem 1rem;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 4px;
-          transform: rotate(-3deg);
-          font-family: 'Bebas Neue';
-          opacity: 0.5;
-        }
-
-        /* Final CTA */
-        .final-cta {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          padding: 0 5%;
-        }
-
-        .final-title {
-          font-size: clamp(3rem, 10vw, 8rem);
-          line-height: 0.9;
-          margin-bottom: 2rem;
-        }
-
-        /* Footer */
-        .footer {
-          padding: 6rem 5% 0;
-          background: var(--bg-primary);
-          border-top: 1px solid var(--border-subtle);
-        }
-
-        .footer-top {
-          display: grid;
-          grid-template-columns: 1.5fr 1fr 1fr;
-          gap: 4rem;
-          padding-bottom: 4rem;
-        }
-
-        .footer-logo-box {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .footer-nav {
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-          color: var(--text-muted);
-          font-size: 0.8rem;
-        }
-
-        .footer-nav a {
-          color: inherit;
-          text-decoration: none;
-          transition: color 0.2s;
-        }
-
-        .footer-nav a:hover {
-          color: var(--text-secondary);
-        }
-
-        .footer-right {
-          text-align: right;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          gap: 0.75rem;
-          color: var(--text-muted);
-          font-size: 0.8rem;
-        }
-
-        .dpdp-badge {
-          font-size: 10px;
-          padding: 2px 8px;
-          border: 1px solid var(--border-subtle);
-          border-radius: 4px;
-          color: var(--text-muted);
-          text-transform: uppercase;
-        }
-
-        .footer-divider {
-          height: 1px;
-          background: rgba(255, 255, 255, 0.08);
-          width: 100%;
-        }
-
-        .giant-word-section {
-          position: relative;
-          padding-top: 2rem;
-          overflow: hidden;
-          cursor: default;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .floating-label {
-          font-size: 11px;
-          letter-spacing: 0.3em;
-          color: var(--accent-saffron);
-          opacity: 0.7;
-          margin-bottom: 0.5rem;
-          width: 100%;
-          text-align: center;
-        }
-
-        .giant-word {
-          font-family: 'Bebas Neue';
-          font-size: clamp(100px, 16vw, 260px);
-          color: white;
-          letter-spacing: -0.02em;
-          line-height: 0.8;
-          display: block;
-          width: 100%;
-          text-align: left;
-          opacity: 0.92;
-          margin-bottom: -0.15em;
-          position: relative;
-          z-index: 2;
-          user-select: none;
-        }
-
-        .saffron-glow {
-          background: radial-gradient(ellipse 80% 40% at 50% 120%, rgba(255,153,51,0.18) 0%, transparent 70%);
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          pointer-events: none;
-        }
-
-        .bottom-bar {
-          border-top: 1px solid var(--accent-saffron);
-          width: 100%;
-          padding: 1rem 0 2rem;
-          text-align: center;
-          z-index: 3;
-          position: relative;
-          background: var(--bg-primary);
-        }
-
-        .copyright {
-          font-size: 11px;
-          color: var(--text-muted);
-        }
-
-        @media (max-width: 768px) {
-          .footer-top { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
-          .footer-right { align-items: center; text-align: center; }
-          .footer-nav { flex-wrap: wrap; }
-          .giant-word { text-align: center; }
-        }
-      `}</style>
-
       {/* NAVBAR */}
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <a href="/" className="logo bebas">SkillBridge AI <span>.</span></a>
+        <div className="nav-links hidden md:flex items-center gap-8 mr-8" style={{ display: 'flex', gap: '2rem', marginRight: '2rem' }}>
+          <a href="#gap" className="text-sm bebas tracking-widest text-gray-400 hover:text-white transition-colors">THE GAP</a>
+          <a href="#ecosystem" className="text-sm bebas tracking-widest text-gray-400 hover:text-white transition-colors">ECOSYSTEM</a>
+          <a href="#pricing" className="text-sm bebas tracking-widest text-gray-400 hover:text-white transition-colors">PRICING</a>
+        </div>
         <div className="nav-right">
           <a href="/signup" className="nav-btn">Start Free Assessment <ArrowRight className="w-4 h-4" /></a>
         </div>
       </nav>
 
       {/* HERO */}
-      <header className="hero">
+      <section className="hero" id="home">
         <canvas ref={canvasRef} className="hero-canvas" />
         <div className="hero-grain" />
         <div className="hero-content animate-on-scroll">
@@ -1143,7 +317,7 @@ const LandingPage = () => {
         <div className="scroll-indicator">
           <ChevronDown className="w-8 h-8" />
         </div>
-      </header>
+      </section>
 
       {/* DATA WALL */}
       <section className="data-wall">
@@ -1241,6 +415,165 @@ const LandingPage = () => {
           ))}
         </div>
       </section>
+      
+      {/* THE GAP */}
+      <section className="gap-section" id="gap">
+        <div className="gap-container">
+          <div className="gap-left animate-on-scroll">
+            <h2 className="section-title bebas">THE GAP IS WIDENING.<br /><span style={{ color: 'var(--accent-saffron)' }}>WE BRIDGE IT.</span></h2>
+            <p className="section-sub text-lg mb-8" style={{ maxWidth: '500px' }}>
+              The job market is moving at AI speed. Education is moving at institutional speed. 
+              SkillBridge AI maps real-time demand to your current profile, identifying the 
+              exact delta you need to close to become employable.
+            </p>
+            <div className="flex flex-col gap-6">
+              {[
+                { t: "Live Demand Tracking", d: "We scan 10,000+ job postings daily in Hindi & English." },
+                { t: "Dynamic Skill Mapping", d: "Our ontology recognizes 45,000+ granular skill nodes." },
+                { t: "Local Context", d: "Tailored for Tier-2 and Tier-3 Indian cities." }
+              ].map(item => (
+                <div key={item.t} className="flex gap-4">
+                  <div className="mt-1"><CheckCircle2 className="w-5 h-5 text-teal-400" /></div>
+                  <div>
+                    <h4 className="bebas text-lg">{item.t}</h4>
+                    <p className="text-gray-500 text-sm">{item.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="gap-right animate-on-scroll">
+            <div className="glass-card">
+              <div className="chart-header">
+                <h3 className="bebas text-xl">Skill Delta Analysis</h3>
+                <div className="chart-tabs">
+                  <div 
+                    className={`chart-tab ${activeChart === 'demand' ? 'active' : ''}`}
+                    onClick={() => setActiveChart('demand')}
+                  >
+                    DEMAND
+                  </div>
+                  <div 
+                    className={`chart-tab ${activeChart === 'skills' ? 'active' : ''}`}
+                    onClick={() => setActiveChart('skills')}
+                  >
+                    MY SKILLS
+                  </div>
+                </div>
+              </div>
+
+              <svg className="chart-svg" viewBox="0 0 400 200">
+                {/* Grid Lines */}
+                {[0, 50, 100, 150, 200].map(y => (
+                  <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="rgba(255,255,255,0.05)" />
+                ))}
+                
+                {/* Demand Line */}
+                <path 
+                  className="chart-line" 
+                  d="M0,150 L80,120 L160,160 L240,100 L320,130 L400,80" 
+                  stroke="var(--accent-saffron)" 
+                  style={{ opacity: activeChart === 'demand' ? 1 : 0.3 }}
+                />
+                
+                {/* My Skills Line */}
+                <path 
+                  className="chart-line" 
+                  d="M0,180 L80,170 L160,185 L240,175 L320,160 L400,155" 
+                  stroke="var(--accent-teal)" 
+                  style={{ opacity: activeChart === 'skills' ? 1 : 0.3 }}
+                />
+
+                {/* Data Points */}
+                {[
+                  { x: 80, y: 120, label: 'Demand', color: 'var(--accent-saffron)' },
+                  { x: 80, y: 170, label: 'Skill', color: 'var(--accent-teal)' },
+                  { x: 400, y: 80, label: 'Demand', color: 'var(--accent-saffron)' },
+                  { x: 400, y: 155, label: 'Skill', color: 'var(--accent-teal)' }
+                ].map((p, i) => (
+                  <circle 
+                    key={i} 
+                    cx={p.x} 
+                    cy={p.y} 
+                    r="4" 
+                    fill={p.color} 
+                    className="chart-point"
+                  />
+                ))}
+                
+                {/* Area under lines */}
+                <path 
+                  d="M0,150 L80,120 L160,160 L240,100 L320,130 L400,80 L400,200 L0,200 Z" 
+                  fill="url(#saffron-grad)" 
+                  style={{ opacity: activeChart === 'demand' ? 0.1 : 0.05 }}
+                />
+
+                <defs>
+                  <linearGradient id="saffron-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--accent-saffron)" />
+                    <stop offset="100%" stopColor="transparent" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <div className="chart-legend">
+                <div className="legend-item">
+                  <div className="legend-dot" style={{ background: 'var(--accent-saffron)' }}></div>
+                  Market Demand
+                </div>
+                <div className="legend-item">
+                  <div className="legend-dot" style={{ background: 'var(--accent-teal)' }}></div>
+                  Average Talent Skill
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOR THE ECOSYSTEM */}
+      <section className="ecosystem-section" id="ecosystem">
+        <div className="section-header animate-on-scroll text-center">
+          <h2 className="section-title bebas">FOR THE ECOSYSTEM</h2>
+          <p className="section-sub mx-auto" style={{ maxWidth: '600px' }}>
+            We don't just help individuals. We provide the data infrastructure 
+            for India's skilling organizations and government bodies.
+          </p>
+        </div>
+
+        <div className="eco-grid">
+          {[
+            {
+              title: "FOR NGOs & CSR",
+              icon: <Users className="w-6 h-6" />,
+              desc: "Track trainee outcomes beyond certificates. Get real placement data and automated CSR compliance reports.",
+              link: "Explore NGO Dashboard"
+            },
+            {
+              title: "FOR GOVERNMENT",
+              icon: <Landmark className="w-6 h-6" />,
+              desc: "District-level skill gap heatmaps to plan PMKVY camps and industrial training where they are needed most.",
+              link: "Access Workforce Data"
+            },
+            {
+              title: "FOR CORPORATES",
+              icon: <Briefcase className="w-6 h-6" />,
+              desc: "Direct pipeline to verified, job-ready talent from Tier-2 India. Stop guessing, start hiring by proficiency.",
+              link: "Start Hiring"
+            }
+          ].map(eco => (
+            <div key={eco.title} className="eco-card animate-on-scroll">
+              <div className="eco-icon">{eco.icon}</div>
+              <h3 className="eco-title bebas">{eco.title}</h3>
+              <p className="eco-desc">{eco.desc}</p>
+              <a href="#" className="eco-link bebas">
+                {eco.link} <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* TIMELINE */}
       <section className="timeline-section">
@@ -1295,46 +628,36 @@ const LandingPage = () => {
       </section>
 
       {/* PRICING */}
-      <section className="pricing-section">
+      <section className="pricing-section" id="pricing">
         <h2 className="section-title bebas text-center animate-on-scroll">
-          WE DON'T CHARGE THE PEOPLE WHO NEED IT MOST
+          INVESTING IN INDIA'S HUMAN CAPITAL
         </h2>
 
         <div className="pricing-grid">
           <div className="pricing-card animate-on-scroll">
             <h3 className="price-title bebas">INDIVIDUAL</h3>
-            <p className="text-gray-400 mb-4">Students, Blue-collar, Informal</p>
+            <p className="text-gray-400 mb-4">Students & Workers</p>
             <div className="price-tag bebas">₹0 FOREVER</div>
+            <p className="text-xs text-gray-500 mb-6 italic">"Our mission is to ensure every Indian youth has a roadmap, regardless of their ability to pay."</p>
             <ul className="price-list">
               {["Full skill assessment", "Gap analysis", "Learning roadmap", "Job matching", "AI career chat", "Govt scheme finder"].map(item => (
                 <li key={item}><CheckCircle2 className="w-5 h-5 text-teal-400" /> {item}</li>
               ))}
             </ul>
-            <a href="/signup" className="price-btn saffron">Start Free →</a>
+            <a href="/signup" className="price-btn saffron">Start Free Assessment →</a>
           </div>
 
           <div className="pricing-card featured animate-on-scroll">
-            <h3 className="price-title bebas">NGO / SKILLING</h3>
-            <p className="text-gray-400 mb-4">Organizations & Cohorts</p>
-            <div className="price-tag bebas">CONTACT FOR PRICING</div>
+            <h3 className="price-title bebas">ENTERPRISE / NGO</h3>
+            <p className="text-gray-400 mb-4">Scale Impact & Placements</p>
+            <div className="price-tag bebas">PARTNER WITH US</div>
+            <p className="text-xs text-gray-500 mb-6 italic">"Customized dashboards for tracking 100 to 100,000+ candidates in real-time."</p>
             <ul className="price-list">
-              {["Cohort dashboard", "Trainee progress tracking", "Placement outcome reports", "CSR funder reports", "Bulk SMS/WhatsApp integration"].map(item => (
+              {["Cohort tracking", "Placement verification", "CSR outcome reports", "Bulk SMS/WhatsApp sync", "White-labeled portal", "API access"].map(item => (
                 <li key={item}><CheckCircle2 className="w-5 h-5 text-saffron" /> {item}</li>
               ))}
             </ul>
-            <a href="mailto:partners@skillbridge.ai" className="price-btn saffron">Get Demo →</a>
-          </div>
-
-          <div className="pricing-card animate-on-scroll">
-            <h3 className="price-title bebas">GOVERNMENT</h3>
-            <p className="text-gray-400 mb-4">District & State Bodies</p>
-            <div className="price-tag bebas">CUSTOM DEPLOYMENT</div>
-            <ul className="price-list">
-              {["Real-time workforce data", "District skill gap maps", "PMKVY camp planning", "Aadhar integration support", "Employment exchange sync"].map(item => (
-                <li key={item}><CheckCircle2 className="w-5 h-5 text-gray-400" /> {item}</li>
-              ))}
-            </ul>
-            <a href="mailto:partners@skillbridge.ai" className="price-btn outline">Partner with us →</a>
+            <a href="mailto:partners@skillbridge.ai" className="price-btn saffron">Get Partner Access →</a>
           </div>
         </div>
       </section>
