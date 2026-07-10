@@ -27,6 +27,7 @@ export const GapAnalysisPage: React.FC = () => {
     runAnalysis();
   };
 
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] gap-6 max-w-2xl mx-auto text-center px-4">
         <div className="relative">
@@ -41,6 +42,8 @@ export const GapAnalysisPage: React.FC = () => {
         </div>
       </div>
     );
+  }
+
 
   // Handle generic error (might be 400 for NO_SKILLS or NO_JOBS)
   if (error) {

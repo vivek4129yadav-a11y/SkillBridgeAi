@@ -24,7 +24,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   isLoading,
 }) => {
   const [answers, setAnswers] = useState<BatchAnswers>({});
-  const [batchKey] = useState(() => batch.questions.map(q => q.question).join('|'));
+  const batchKey = batch.questions.map(q => q.question).join('|');
 
   // Reset answers when batch changes
   const [prevBatchKey, setPrevBatchKey] = useState(batchKey);

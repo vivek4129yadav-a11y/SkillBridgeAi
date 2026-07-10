@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAssessmentStatus, useStartAssessment, useSubmitAnswer } from '@/hooks/useAssessment';
+import { useAssessmentStatus, useStartAssessment, useSubmitAnswer, useRestartAssessment } from '@/hooks/useAssessment';
 import { PhaseIndicator } from './PhaseIndicator';
 import { QuestionCard } from './QuestionCard';
 import { RetakeNotice } from './RetakeNotice';
@@ -16,6 +16,7 @@ export const AssessmentPage: React.FC = () => {
   const { data: status, isLoading: isStatusLoading, error: statusError } = useAssessmentStatus();
   const { mutate: startAssessment, isPending: isStarting } = useStartAssessment();
   const { mutateAsync: submitAnswer, isPending: isSubmitting } = useSubmitAnswer();
+  const { mutate: restartAssessment, isPending: isRestarting } = useRestartAssessment();
 
   const [session, setSession] = useState<AssessmentSession | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
@@ -42,6 +43,33 @@ export const AssessmentPage: React.FC = () => {
       onError: (err: any) => {
         toast({
           title: 'Error starting assessment',
+          description: err?.response?.data?.detail?.message || 'Please try again later.',
+          variant: 'destructive',
+        });
+      },
+    });
+  };
+
+  const handleRestart = () => {
+    if (!window.confirm("Are you sure you want to discard your current progress and restart the assessment?")) {
+      return;
+    }
+    restartAssessment(undefined, {
+      onSuccess: (data) => {
+        setSession(data);
+        setQuestionOffset(data.question_number - 1);
+        const prevPhases = Array.from({ length: data.phase - 1 }, (_, i) => i + 1);
+        setCompletedPhases(prevPhases);
+        setQuotaExceeded(false);
+        setAutoRetryCount(0);
+        toast({
+          title: 'Assessment restarted',
+          description: 'A new session has been created.',
+        });
+      },
+      onError: (err: any) => {
+        toast({
+          title: 'Error restarting assessment',
           description: err?.response?.data?.detail?.message || 'Please try again later.',
           variant: 'destructive',
         });
@@ -272,9 +300,18 @@ export const AssessmentPage: React.FC = () => {
         </div>
       )}
 
-      <div className="mt-10 text-center text-xs font-medium text-gray-400 flex items-center justify-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-        Progress auto-saved
+      <div className="mt-10 flex flex-col items-center gap-3">
+        <div className="text-xs font-medium text-gray-400 flex items-center justify-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          Progress auto-saved
+        </div>
+        <button
+          onClick={handleRestart}
+          disabled={isRestarting}
+          className="text-xs font-semibold text-gray-400 hover:text-red-500 transition flex items-center gap-1 mt-2 disabled:opacity-50"
+        >
+          {isRestarting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "⚠️ Reset & Restart Assessment"}
+        </button>
       </div>
     </div>
   );

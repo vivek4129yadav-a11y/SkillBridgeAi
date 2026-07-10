@@ -35,6 +35,19 @@ export const useStartAssessment = () => {
   });
 };
 
+export const useRestartAssessment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (): Promise<AssessmentSession> => {
+      const res = await api.post('/assessment/restart');
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assessment', 'status'] });
+    },
+  });
+};
+
 export const useSubmitAnswer = () => {
   return useMutation({
     mutationFn: async (data: { session_id: string; answer: string }): Promise<AssessmentSession> => {
