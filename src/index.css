@@ -314,4 +314,18 @@
   .glow-emerald { box-shadow: 0 0 20px rgba(52,211,153,0.2); }
   .glow-amber { box-shadow: 0 0 20px rgba(251,191,36,0.2); }
   .glow-blue { box-shadow: 0 0 20px rgba(56,189,248,0.2); }
+
+  /* ── Assessment Report Markdown ── */
+  .report-markdown h1 { font-size: 1.5rem; font-weight: 800; color: #1e1b4b; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
+  .report-markdown h2 { font-size: 1.25rem; font-weight: 700; color: #312e81; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+  .report-markdown h3 { font-size: 1.1rem; font-weight: 600; color: #4338ca; margin-top: 1rem; margin-bottom: 0.5rem; }
+  .report-markdown p { margin-bottom: 0.75rem; color: #374151; line-height: 1.6; }
+  .report-markdown strong { font-weight: 700; color: #111827; }
+  .report-markdown em { font-style: italic; color: #4b5563; }
+  .report-markdown ul { margin: 0.75rem 0; padding-left: 1.5rem; list-style-type: disc; }
+  .report-markdown ol { margin: 0.75rem 0; padding-left: 1.5rem; list-style-type: decimal; }
+  .report-markdown li { margin-bottom: 0.375rem; color: #4b5563; }
+  .report-markdown li strong { color: #1f2937; }
+  .report-markdown hr { border: 0; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
+  .report-markdown blockquote { border-left: 4px solid #8b5cf6; padding-left: 1rem; font-style: italic; color: #4b5563; margin: 1rem 0; }
 }

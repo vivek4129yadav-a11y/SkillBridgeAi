@@ -26,6 +26,8 @@ export interface AssessmentSession {
   can_resume: boolean;
   is_complete: boolean;
   skills_found?: any[]; 
+  assessment_summary?: string;
+  can_retake?: boolean;
 }
 
 export interface AssessmentStatus {

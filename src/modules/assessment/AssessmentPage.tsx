@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAssessmentStatus, useStartAssessment, useSubmitAnswer, useRestartAssessment } from '@/hooks/useAssessment';
+import { useAssessmentStatus, useStartAssessment, useSubmitAnswer, useRestartAssessment, useLatestAssessment } from '@/hooks/useAssessment';
 import { PhaseIndicator } from './PhaseIndicator';
 import { QuestionCard } from './QuestionCard';
 import { RetakeNotice } from './RetakeNotice';
@@ -17,6 +17,10 @@ export const AssessmentPage: React.FC = () => {
   const { mutate: startAssessment, isPending: isStarting } = useStartAssessment();
   const { mutateAsync: submitAnswer, isPending: isSubmitting } = useSubmitAnswer();
   const { mutate: restartAssessment, isPending: isRestarting } = useRestartAssessment();
+
+  // Load the latest completed assessment report if status shows completed
+  const showLatestReport = !!(status?.has_completed && !status?.has_incomplete);
+  const { data: latestSession, isLoading: isLatestLoading } = useLatestAssessment(showLatestReport);
 
   const [session, setSession] = useState<AssessmentSession | null>(null);
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
@@ -55,17 +59,17 @@ export const AssessmentPage: React.FC = () => {
       return;
     }
     restartAssessment(undefined, {
-      onSuccess: (data) => {
-        setSession(data);
-        setQuestionOffset(data.question_number - 1);
-        const prevPhases = Array.from({ length: data.phase - 1 }, (_, i) => i + 1);
-        setCompletedPhases(prevPhases);
+      onSuccess: () => {
+        setSession(null);
+        setQuestionOffset(0);
+        setCompletedPhases([]);
         setQuotaExceeded(false);
         setAutoRetryCount(0);
         toast({
           title: 'Assessment restarted',
-          description: 'A new session has been created.',
+          description: 'Your previous progress was discarded.',
         });
+        handleStart();
       },
       onError: (err: any) => {
         toast({
@@ -107,7 +111,7 @@ export const AssessmentPage: React.FC = () => {
         setCompletedPhases(prev => Array.from(new Set([...prev, session.phase])));
       }
 
-      setSession(data);
+      setSession(prev => prev ? { ...prev, ...data } : data);
       setAutoRetryCount(0);
     } catch (err: any) {
       const errCode = err?.response?.data?.detail?.error_code;
@@ -155,6 +159,16 @@ export const AssessmentPage: React.FC = () => {
   // ── Completed (not in retake session) ────────────────────────────────────
   if (status.has_completed && !status.has_incomplete && !session) {
     const eligible = status.can_retake;
+    
+    if (isLatestLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+          <p className="text-gray-500 font-medium animate-pulse">Loading assessment report...</p>
+        </div>
+      );
+    }
+
     return (
       <div className="max-w-[720px] mx-auto pt-8 px-4">
         {!eligible && (
@@ -165,37 +179,49 @@ export const AssessmentPage: React.FC = () => {
             lastCompletedAt={status.last_completed_at}
           />
         )}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center animate-in fade-in duration-500">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Assessment already completed</h2>
-          <p className="text-gray-600 mb-8">
-            Review your personalized gap analysis to see results and your learning roadmap.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/gap-analysis')}
-              className="px-6 py-3 bg-violet-600 text-white rounded-lg font-bold hover:bg-violet-700 transition"
-            >
-              View Gap Analysis →
-            </button>
-            {eligible && (
+        {latestSession ? (
+          <AssessmentComplete
+            skillsCount={latestSession.skills_found?.length || 0}
+            skillsFound={latestSession.skills_found}
+            assessmentSummary={latestSession.assessment_summary}
+            canRetake={eligible}
+            onRetake={handleStart}
+            isRetaking={isStarting}
+            retakesRemaining={status.retakes_remaining}
+          />
+        ) : (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center animate-in fade-in duration-500">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Assessment already completed</h2>
+            <p className="text-gray-600 mb-8">
+              Review your personalized gap analysis to see results and your learning roadmap.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => {
-                  if (window.confirm('This will start a new assessment. Are you sure?')) handleStart();
-                }}
-                disabled={isStarting}
-                className="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg font-bold hover:bg-gray-50 flex items-center justify-center gap-2 disabled:opacity-50"
+                onClick={() => navigate('/gap-analysis')}
+                className="px-6 py-3 bg-violet-600 text-white rounded-lg font-bold hover:bg-violet-700 transition"
               >
-                {isStarting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                Retake Assessment
+                View Gap Analysis →
               </button>
+              {eligible && (
+                <button
+                  onClick={() => {
+                    if (window.confirm('This will start a new assessment. Are you sure?')) handleStart();
+                  }}
+                  disabled={isStarting}
+                  className="px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg font-bold hover:bg-gray-50 flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isStarting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Retake Assessment
+                </button>
+              )}
+            </div>
+            {eligible && (
+              <div className="mt-6 text-sm text-gray-500 font-medium">
+                {status.retakes_remaining} retake(s) remaining.
+              </div>
             )}
           </div>
-          {eligible && (
-            <div className="mt-6 text-sm text-gray-500 font-medium">
-              {status.retakes_remaining} retake(s) remaining.
-            </div>
-          )}
-        </div>
+        )}
       </div>
     );
   }
@@ -286,6 +312,7 @@ export const AssessmentPage: React.FC = () => {
 
       {batch ? (
         <QuestionCard
+          key={questionOffset}
           batch={batch}
           questionNumberOffset={questionOffset}
           totalEstimate={10}

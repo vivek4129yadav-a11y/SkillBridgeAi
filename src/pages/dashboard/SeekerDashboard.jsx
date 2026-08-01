@@ -222,52 +222,97 @@ const SeekerDashboard = () => {
           {/* Recommended Jobs */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Briefcase size={22} className="text-emerald-400" />
+              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <Briefcase size={18} className="text-emerald-450" />
                 Recommended Jobs
               </h2>
-              <button onClick={() => navigate('/jobs')} className="text-sm text-emerald-400 hover:underline">View all</button>
+              <button 
+                onClick={() => navigate('/jobs')} 
+                className="text-xs font-bold text-emerald-400 hover:text-emerald-350 transition-colors bg-emerald-500/5 hover:bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/10 hover:border-emerald-500/20"
+              >
+                View all
+              </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {jobs?.length > 0 ? jobs.map((job, i) => (
-                <div key={job.id || i} className="bg-gray-900/60 border border-gray-800 p-5 rounded-2xl hover:border-emerald-500/40 transition-all group relative overflow-hidden">
-                  {/* Match Score Indicator */}
-                  <div className="absolute top-0 right-0 p-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-black border-2 ${
-                      job.match_score >= 80 ? "border-emerald-500 text-emerald-400 bg-emerald-500/5" :
-                      job.match_score >= 50 ? "border-amber-500 text-amber-400 bg-amber-500/5" :
-                      "border-gray-600 text-gray-400 bg-gray-600/5"
-                    }`}>
-                      {job.match_score || 0}
+                <div key={job.id || i} className="bg-gray-900/50 border border-gray-800/80 p-4 rounded-xl hover:border-emerald-500/40 transition-all group relative flex flex-col justify-between">
+                  <div>
+                    {/* Header Row: Title & Match Score */}
+                    <div className="flex justify-between items-start gap-4 mb-1.5">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-white group-hover:text-emerald-400 transition-colors text-sm line-clamp-1">{job.title}</h3>
+                        <p className="text-[11px] text-gray-450 font-medium">{job.company}</p>
+                      </div>
+                      <div className={`w-8 h-8 rounded-lg flex flex-col items-center justify-center text-[10px] font-black border shrink-0 ${
+                        job.match_score >= 80 ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10" :
+                        job.match_score >= 50 ? "border-amber-500/30 text-amber-400 bg-amber-500/10" :
+                        "border-gray-700 text-gray-400 bg-gray-800"
+                      }`} title="Match Score">
+                        <span className="text-[8px] text-gray-500 font-medium -mb-0.5 leading-none">FIT</span>
+                        <span className="leading-tight">{job.match_score || 0}%</span>
+                      </div>
+                    </div>
+
+                    {/* Metadata line (tags) */}
+                    <div className="flex flex-wrap gap-1 mb-2.5">
+                      {job.job_type && (
+                        <span className="px-1.5 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[8px] font-extrabold rounded uppercase tracking-wider">
+                          {job.job_type.replace('_', ' ')}
+                        </span>
+                      )}
+                      {job.work_mode && (
+                        <span className="px-1.5 py-0.5 bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[8px] font-extrabold rounded uppercase tracking-wider">
+                          {job.work_mode}
+                        </span>
+                      )}
+                      {job.experience_min !== undefined && (
+                        <span className="px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[8px] font-extrabold rounded uppercase tracking-wider">
+                          {job.experience_min === 0 ? 'Entry Level' : `${job.experience_min}+ Yrs Exp`}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Skill Tags */}
+                    {job.required_skills && job.required_skills.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2.5">
+                        {job.required_skills.slice(0, 3).map((skill, sIdx) => (
+                          <span key={sIdx} className="px-1.5 py-0.5 bg-gray-800/80 text-gray-300 border border-gray-700/60 rounded text-[8px] font-medium">
+                            {skill}
+                          </span>
+                        ))}
+                        {job.required_skills.length > 3 && (
+                          <span className="px-1 py-0.5 text-gray-500 text-[8px] font-medium">
+                            +{job.required_skills.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Match Reason Banner */}
+                    <div className="bg-gray-800/30 border border-gray-800 p-2.5 rounded-lg mb-3">
+                      <p className="text-[10px] text-gray-350 leading-relaxed font-medium">
+                        <span className="text-emerald-400 font-bold mr-1">Match Reason:</span>
+                        {job.reason_for_match || "Matches your profile interests."}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col mb-3 pr-10">
-                    <h3 className="font-bold text-white group-hover:text-emerald-400 transition-colors text-base">{job.title}</h3>
-                    <p className="text-xs text-gray-500 font-medium">{job.company}</p>
+                  {/* Location, Salary and Details CTA */}
+                  <div className="pt-2 border-t border-gray-800/80 flex items-center justify-between">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[10px] text-gray-450 font-medium flex items-center gap-1">📍 {job.location_city || job.location_state || 'India'}</span>
+                      <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-0.5">₹ {job.salary_min ? `${(job.salary_min/1000).toFixed(0)}k - ${(job.salary_max/1000).toFixed(0)}k` : 'Negotiable'}</span>
+                    </div>
+                    <button 
+                      onClick={() => navigate(`/jobs/${job.id}`)}
+                      className="px-3 py-1.5 bg-indigo-600/10 hover:bg-emerald-600 text-indigo-400 hover:text-white text-[10px] font-bold rounded-lg border border-indigo-600/20 hover:border-emerald-600 transition-all shrink-0"
+                    >
+                      View Details
+                    </button>
                   </div>
-
-                  <div className="bg-gray-800/30 border border-gray-700/50 p-3 rounded-xl mb-4">
-                    <p className="text-[10px] text-gray-300 leading-relaxed font-medium">
-                      <span className="text-emerald-400 font-bold mr-1">Why:</span>
-                      {job.reason_for_match || "Matches your profile interests."}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-[10px] text-gray-400 mb-5">
-                    <span className="flex items-center gap-1"><Globe size={12} className="text-indigo-400" /> {job.location_city || job.location_state || 'India'}</span>
-                    <span className="flex items-center gap-1"><TrendingUp size={12} className="text-emerald-400" /> {job.salary_min ? `₹${job.salary_min/1000}k - ₹${job.salary_max/1000}k` : 'Negotiable'}</span>
-                  </div>
-                  
-                  <button 
-                    onClick={() => navigate(`/jobs/${job.id}`)}
-                    className="w-full py-2.5 bg-indigo-600/10 hover:bg-emerald-600 text-indigo-400 hover:text-white text-xs font-bold rounded-xl border border-indigo-600/20 hover:border-emerald-600 transition-all"
-                  >
-                    View Details
-                  </button>
                 </div>
               )) : (
-                <div className="col-span-2 py-12 text-center border border-dashed border-gray-800 rounded-2xl text-gray-600 italic">
+                <div className="col-span-2 py-8 text-center border border-dashed border-gray-800 rounded-xl text-gray-550 text-xs italic">
                   No jobs found matching your criteria yet.
                 </div>
               )}
@@ -276,31 +321,65 @@ const SeekerDashboard = () => {
 
           {/* Recommended Courses */}
           <section>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-4">
-              <BookOpen size={22} className="text-amber-400" />
+            <h2 className="text-lg font-extrabold text-white flex items-center gap-2 mb-4">
+              <BookOpen size={18} className="text-amber-450" />
               Upskill for Better Pay
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+            <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
               {courses?.length > 0 ? courses.map((course, i) => (
-                <div key={i} className="min-w-[280px] bg-gray-900/60 border border-gray-800 rounded-2xl overflow-hidden group hover:border-amber-500/40 transition-all">
-                  <div className="aspect-video bg-gray-800 relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-3 left-3">
-                      <p className="text-xs font-bold text-white">{course.provider || 'SkillBridge'}</p>
+                <div key={i} className="min-w-[280px] max-w-[280px] bg-gray-900/50 border border-gray-800 p-4 rounded-xl flex flex-col justify-between hover:border-amber-500/40 transition-all group relative min-h-[170px]">
+                  <div>
+                    {/* Top Row: Provider & Category Badges */}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[9px] font-black rounded">
+                        {course.provider || 'SkillBridge'}
+                      </span>
+                      <span className="text-[9px] text-gray-500 font-semibold uppercase tracking-wider">
+                        {course.category || 'Vocational'}
+                      </span>
                     </div>
+
+                    {/* Course Title */}
+                    <h3 className="text-xs font-bold text-white leading-snug line-clamp-2 mb-2 group-hover:text-amber-400 transition-colors min-h-[32px]">
+                      {course.title || course.name}
+                    </h3>
+
+                    {/* Skill Tags */}
+                    {course.skill_tags && course.skill_tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {course.skill_tags.slice(0, 2).map((tag, tIdx) => (
+                          <span key={tIdx} className="px-1.5 py-0.5 bg-gray-800/60 text-gray-400 text-[8px] font-medium rounded">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-sm font-bold text-white line-clamp-2 mb-4 h-10 group-hover:text-amber-400 transition-colors">{course.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-gray-500">{course.type || 'Course'}</span>
-                      <a href={course.url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-amber-400 flex items-center gap-1">
-                        Enroll Now <ChevronRight size={12} />
-                      </a>
+
+                  {/* Bottom Stats & CTA */}
+                  <div className="pt-2.5 border-t border-gray-800/80 flex items-center justify-between mt-auto">
+                    <div className="flex flex-col gap-0.5 text-[9px] text-gray-500 font-medium">
+                      {course.duration_weeks && (
+                        <span>⏱ {course.duration_weeks} Weeks</span>
+                      )}
+                      <span>
+                        📶 {course.difficulty_level === 1 ? 'Beginner' : course.difficulty_level === 2 ? 'Intermediate' : course.difficulty_level >= 3 ? 'Advanced' : 'All Levels'}
+                        {course.language && ` • ${course.language === 'hi' ? 'Hindi' : 'English'}`}
+                      </span>
                     </div>
+
+                    <a 
+                      href={course.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-[10px] font-black text-amber-400 hover:text-amber-300 flex items-center gap-0.5 bg-amber-500/5 px-2.5 py-1.5 rounded-lg border border-amber-500/10 hover:border-amber-500/20 hover:bg-amber-500/10 transition-all shrink-0"
+                    >
+                      Enroll <ChevronRight size={10} />
+                    </a>
                   </div>
                 </div>
               )) : (
-                <div className="w-full py-8 text-center text-gray-600 text-sm border border-dashed border-gray-800 rounded-2xl">
+                <div className="w-full py-8 text-center text-gray-500 text-xs border border-dashed border-gray-800 rounded-xl italic">
                   Take an assessment to see personalized course recommendations.
                 </div>
               )}

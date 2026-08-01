@@ -1,18 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { CheckCircle2, ChevronRight, LayoutDashboard, Loader2 } from 'lucide-react';
 import { SkillItem } from '@/types/skills';
+import ReactMarkdown from 'react-markdown';
 
 interface AssessmentCompleteProps {
   skillsCount: number;
   skillsFound?: SkillItem[];
   assessmentSummary?: string;
+  canRetake?: boolean;
+  onRetake?: () => void;
+  isRetaking?: boolean;
+  retakesRemaining?: number;
 }
 
 export const AssessmentComplete: React.FC<AssessmentCompleteProps> = ({ 
   skillsCount, 
   skillsFound = [], 
-  assessmentSummary 
+  assessmentSummary,
+  canRetake,
+  onRetake,
+  isRetaking,
+  retakesRemaining = 0
 }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-10 text-center animate-in zoom-in-95 duration-500">
@@ -41,12 +50,14 @@ export const AssessmentComplete: React.FC<AssessmentCompleteProps> = ({
       )}
 
       {assessmentSummary && (
-        <div className="bg-violet-50 rounded-2xl p-6 mb-8 text-left border border-violet-100 shadow-inner relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <span className="text-6xl font-serif">"</span>
+        <div className="bg-violet-50/50 rounded-2xl p-6 sm:p-8 mb-8 text-left border border-violet-100/80 shadow-inner relative overflow-hidden max-w-3xl mx-auto">
+          <h4 className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-violet-100 pb-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-violet-500 animate-pulse" />
+            Detailed Career Assessment Report
+          </h4>
+          <div className="report-markdown text-gray-700 leading-relaxed text-sm space-y-4">
+            <ReactMarkdown>{assessmentSummary}</ReactMarkdown>
           </div>
-          <h4 className="text-xs font-bold text-violet-600 uppercase tracking-widest mb-2">Your Career Snapshot</h4>
-          <p className="text-gray-700 italic leading-relaxed relative z-10">"{assessmentSummary}"</p>
         </div>
       )}
       
@@ -64,6 +75,23 @@ export const AssessmentComplete: React.FC<AssessmentCompleteProps> = ({
         >
           Explore Gap Analysis <ChevronRight className="w-5 h-5" />
         </Link>
+
+        {canRetake && onRetake && (
+          <button
+            onClick={onRetake}
+            disabled={isRetaking}
+            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-white text-gray-700 border border-gray-300 rounded-xl font-bold hover:bg-gray-50 transition-all disabled:opacity-50"
+          >
+            {isRetaking ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            Retake Assessment
+          </button>
+        )}
+
+        {canRetake && retakesRemaining > 0 && (
+          <div className="text-xs text-gray-500 font-medium -mt-2">
+            {retakesRemaining} retake(s) remaining.
+          </div>
+        )}
         
         <Link 
           to="/dashboard" 
@@ -75,3 +103,4 @@ export const AssessmentComplete: React.FC<AssessmentCompleteProps> = ({
     </div>
   );
 };
+
