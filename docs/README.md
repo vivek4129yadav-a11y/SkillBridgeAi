@@ -1,36 +1,48 @@
-# Frontend Setup
+# Frontend Documentation
+
+> For the main setup instructions, see the [Frontend README](file:///home/um/Stuffs/SANKALP/frontend/README.md).
 
 ## Requirements
-- Node.js 18+ 
+- Node.js 18+
+- npm
 
-## Setup
+## Quick Setup
 
 ```bash
+# 1. Enter directory
 cd frontend
-cp .env.example .env
-# Set VITE_API_BASE_URL to your backend URL (default: http://localhost:8000)
 
+# 2. Copy environment file
+cp .env.example .env
+
+# 3. Install packages
 npm install
+
+# 4. Start local development server
 npm run dev
 ```
 
-Open **http://localhost:5173**
+Open your browser at **http://localhost:5173**
 
-## .env Variables
+## Environment Variables (`.env`)
 
 | Variable | Description |
 |---|---|
-| `VITE_API_BASE_URL` | Backend API URL |
-| `VITE_ADMIN_SECRET` | Admin secret (same as backend ADMIN_SECRET) |
+| `VITE_API_BASE_URL` | Backend API URL (`http://localhost:8000`) |
+| `VITE_ADMIN_SECRET` | Admin secret (must match backend `ADMIN_SECRET`) |
+| `VITE_APP_NAME` | Application name (`SkillBridge AI`) |
 
-## Routes
+## Available Routes
 
-| Path | Component | Description |
-|---|---|---|
-| `/auth` | AuthPage | Login + OTP verify |
-| `/onboarding` | OnboardingPage | 5-step career wizard |
-| `/processing` | ProcessingPage | SSE processing stream |
-| `/dashboard` | DashboardPage | Main dashboard |
-| `/profile` | ProfilePage | View/edit profile + resume upload |
-| `/jobs` | JobsPage | Job listings with filters |
-| `/admin` | AdminPage | Admin-only job CRUD (hidden from nav) |
+| Path | Description |
+|---|---|
+| `/` | Landing page |
+| `/login` | User login |
+| `/verify-otp` | OTP code verification |
+| `/onboarding/*` | Step-by-step profile onboarding wizard |
+| `/dashboard` | User role-specific dashboard |
+| `/assessment` | Adaptive AI skill assessment quiz |
+| `/gap-analysis` | Career skill gap roadmap & suggestions |
+| `/resume-analysis` | Resume upload and instant AI feedback |
+| `/jobs` | Job listings and filters |
+| `/admin` | Job listings management portal |
