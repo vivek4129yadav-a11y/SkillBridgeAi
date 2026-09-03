@@ -1,19 +1,16 @@
 # SANKALP Frontend
 
-This is the frontend web user interface for **SANKALP (SkillBridge AI)**.  
-It is built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.
-
-It provides simple, interactive screens for job seekers, students, blue-collar workers, employers, NGOs, and government administrators.
+React single-page app for SANKALP. Built with TypeScript, Vite, and Tailwind CSS.
 
 ---
 
-## 📋 What You Need First (Prerequisites)
+## Requirements
 
-Make sure you have installed on your computer:
-- **Node.js 18+** (Node.js 20 recommended): [Download Node.js](https://nodejs.org/)
-- **npm** (comes automatically when you install Node.js)
+- Node.js 18 or newer (Node.js 20 LTS recommended)
+- npm 9 or newer
 
-To check if Node.js and npm are installed, run:
+Check your versions:
+
 ```bash
 node -v
 npm -v
@@ -21,116 +18,110 @@ npm -v
 
 ---
 
-## 🚀 Quick Setup Guide (Step-by-Step)
+## Installation
 
-### Step 1: Open the Frontend Directory
-Open your terminal and navigate to the `frontend` folder:
+### 1. Open Directory
+
+Move to the `frontend` folder:
+
 ```bash
 cd frontend
 ```
 
----
+### 2. Configure Environment Variables
 
-### Step 2: Configure Environment Variables (`.env`)
-1. Make a copy of `.env.example` and name it `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   *(On Windows Command Prompt: `copy .env.example .env`)*
+Copy the sample file:
 
-2. Open `.env` in your text editor:
-   ```env
-   # URL of your running backend server
-   VITE_API_BASE_URL=http://localhost:8000
+```bash
+cp .env.example .env
+```
 
-   # Admin secret (must match ADMIN_SECRET from backend .env)
-   VITE_ADMIN_SECRET=your-admin-secret-for-job-crud
+Settings in `.env`:
 
-   # Application details
-   VITE_APP_NAME=SkillBridge AI
-   VITE_APP_ENV=development
-   ```
+| Variable | Required | Description | Default |
+|---|---|---|---|
+| `VITE_API_BASE_URL` | Yes | Backend server root URL | `http://localhost:8000` |
+| `VITE_ADMIN_SECRET` | Yes | Admin secret for job management | `your-admin-secret-for-job-crud` |
+| `VITE_APP_NAME` | No | App name displayed in UI | `SkillBridge AI` |
+| `VITE_APP_ENV` | No | Runtime environment | `development` |
 
----
+### 3. Install Packages
 
-### Step 3: Install Required Packages
-Run this command to download and install all frontend packages:
 ```bash
 npm install
 ```
 
----
+### 4. Start Development Server
 
-### Step 4: Start the Development Server
-Start the frontend with:
 ```bash
 npm run dev
 ```
 
-Your frontend app will start immediately!  
-Open your web browser and go to:  
-👉 **`http://localhost:5173`**
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 🧭 Main Pages & Routes
+## Available Scripts
 
-| URL Path | Page Name | Who Uses It | What It Does |
+| Command | Action |
+|---|---|
+| `npm run dev` | Starts Vite development server with hot reload |
+| `npm run build` | Checks types and builds production bundle into `dist/` |
+| `npm run preview` | Runs a local server to test the production build |
+| `npm run lint` | Runs ESLint across source files |
+
+---
+
+## Application Routes
+
+| Path | View | Target Audience | Purpose |
 |---|---|---|---|
-| `/` | Landing Page | All Visitors | Introduction to SANKALP with feature highlights and quick actions |
-| `/login` | Login Page | All Users | Enter phone or email to request a 6-digit login code (OTP) |
-| `/verify-otp` | Verify Code | All Users | Enter the 6-digit code printed in the backend terminal |
-| `/onboarding/*` | Onboarding Wizard | New Users | Setup profile for Students, Blue-Collar Workers, Employers, NGOs, etc. |
-| `/dashboard` | Main Dashboard | Logged-in Users | View profile summary, skill score, and recommended jobs |
-| `/assessment` | Skill Assessment | Job Seekers | Take adaptive AI-generated skill quizzes |
-| `/gap-analysis` | Gap Analysis | Job Seekers | See what skills you need to learn for your dream job |
-| `/resume-analysis`| Resume Checker | Job Seekers | Upload PDF resume to get instant feedback and improvements |
-| `/jobs` | Job Listings | Job Seekers | Search and filter available jobs |
-| `/admin` | Admin Portal | Admins | Add, edit, or delete job listings |
+| `/` | LandingPage | All visitors | Shows features and quick links |
+| `/login` | AuthPage (Login) | All users | Accepts email to send a login code |
+| `/verify-otp` | AuthPage (Verify) | All users | Verifies the 6-digit login code |
+| `/onboarding/*` | OnboardingWizard | New users | Guides profile setup and role selection |
+| `/dashboard` | DashboardPage | Logged-in users | Displays user progress, skill scores, and job matches |
+| `/assessment` | AssessmentPage | Job seekers | Runs dynamic AI skill tests |
+| `/gap-analysis` | GapAnalysisPage | Job seekers | Shows skill gaps and learning paths |
+| `/resume-analysis` | ResumeAnalysisPage | Job seekers | Checks PDF resumes and suggests improvements |
+| `/jobs` | JobsPage | Job seekers | Lists and filters active jobs |
+| `/admin` | AdminPage | Administrators | Adds, edits, and removes job postings |
 
 ---
 
-## 📁 Frontend Folder Structure
+## Project Structure
 
 ```
 frontend/
 ├── src/
-│   ├── components/     # Reusable UI parts (buttons, dialogs, layout, sidebar)
-│   ├── constants/      # App constants (roles, user types)
-│   ├── hooks/          # Custom React hooks (auth, network, UI state)
-│   ├── modules/        # Main feature modules (assessment, gap analysis, jobs, profile)
-│   ├── pages/          # Full-page components (auth, dashboard views, onboarding)
-│   ├── services/       # API call functions (talking to backend)
-│   ├── store/          # Global state management with Zustand
-│   ├── types/          # TypeScript data type definitions
-│   ├── App.tsx         # Main router and page route definitions
-│   ├── main.tsx        # React root mount file
-│   └── index.css       # Global styling and Tailwind CSS rules
-├── public/             # Static public assets (images, icons)
-├── package.json        # Project dependencies and run scripts
-├── vite.config.ts      # Vite build configuration
-└── tailwind.config.ts  # Tailwind styling configuration
+│   ├── components/     # UI building blocks (buttons, dialogs, layouts)
+│   ├── constants/      # App constants and role names
+│   ├── hooks/          # Custom React hooks
+│   ├── modules/        # Feature areas (assessment, gap analysis, jobs, profile)
+│   ├── pages/          # Route view components
+│   ├── services/       # API call wrappers
+│   ├── store/          # Zustand state stores
+│   ├── types/          # TypeScript interfaces and types
+│   ├── App.tsx         # Main route declarations
+│   ├── main.tsx        # React mount entry point
+│   └── index.css       # Tailwind directives and custom styles
+├── public/             # Static files
+├── package.json        # Dependencies and scripts
+├── vite.config.ts      # Vite configuration
+└── tailwind.config.ts  # Tailwind CSS configuration
 ```
 
 ---
 
-## 🛠️ Available Terminal Commands
+## Troubleshooting
 
-- `npm run dev` — Starts the local development server (with hot-reload).
-- `npm run build` — Checks TypeScript types and builds the production version into the `dist/` folder.
-- `npm run preview` — Locally tests the built production bundle.
-- `npm run lint` — Checks code for formatting and syntax issues.
-
----
-
-## ❓ Common Problems and Fixes
-
-- **Error: `Failed to fetch` or Network Errors on Login**
-  - Make sure the backend server is running on `http://localhost:8000`.
-  - Check `VITE_API_BASE_URL` in `frontend/.env` is set to `http://localhost:8000`.
-
-- **Where do I get the OTP login code?**
-  - Check the terminal console where the **backend** is running. The 6-digit code is printed there in plain text.
-
-- **Error: `Port 5173 is already in use`**
-  - Vite will automatically offer to use the next port (e.g. `http://localhost:5174`). You can accept it by typing `y`.
+- **Network error on login:**
+  - Make sure the backend server runs on `http://localhost:8000`.
+  - Check `VITE_API_BASE_URL` in `frontend/.env`.
+  - Check `CORS_ORIGINS` in `backend/.env`.
+- **Finding the login code:**
+  - Look at the terminal running the backend.
+  - The server prints the 6-digit code there.
+- **Port 5173 is busy:**
+  - Vite offers port 5174 automatically. Press `y` to accept it.
+  - Update `CORS_ORIGINS` in `backend/.env` if you change ports.
