@@ -10,7 +10,8 @@ import {
   CheckCircle2,
   XCircle,
   Plus,
-  Filter
+  Filter,
+  Zap
 } from 'lucide-react';
 
 const interviews = [

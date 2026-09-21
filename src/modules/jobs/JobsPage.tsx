@@ -130,7 +130,7 @@ export default function JobsPage() {
                                     {job.salary_min && (
                                         <span className="flex items-center gap-1.5 bg-emerald-500/5 text-emerald-400 px-2 py-1 rounded-md border border-emerald-500/10 font-bold">
                                             <Wallet size={14} />
-                                            ₹{(job.salary_min/1000).toFixed(0)}k - {(job.salary_max/1000).toFixed(0)}k
+                                            ₹{(job.salary_min/1000).toFixed(0)}k - {job.salary_max ? (job.salary_max/1000).toFixed(0) + 'k' : 'Open'}
                                         </span>
                                     )}
                                 </div>
@@ -147,8 +147,8 @@ export default function JobsPage() {
                                             {s}
                                         </span>
                                     ))}
-                                    {job.required_skills?.length > 5 && (
-                                        <span className="text-[10px] text-gray-600 font-bold self-center">+{job.required_skills.length - 5} more</span>
+                                    {(job.required_skills?.length ?? 0) > 5 && (
+                                        <span className="text-[10px] text-gray-600 font-bold self-center">+{(job.required_skills?.length ?? 0) - 5} more</span>
                                     )}
                                 </div>
                             </div>

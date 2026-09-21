@@ -10,7 +10,7 @@ export default function ProfilePage() {
     const qc = useQueryClient()
     const { toast } = useToast()
     const user = useAuthStore(s => s.user)
-    const isSeekerRole = isSeeker(user?.user_type)
+    const isSeekerRole = isSeeker(user?.user_type ?? undefined)
     console.log('[PROFILE] User Role:', user?.user_type, 'Is Seeker:', isSeekerRole)
 
     const { data: profile, isLoading } = useQuery({

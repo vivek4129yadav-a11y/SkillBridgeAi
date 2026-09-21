@@ -21,7 +21,7 @@ export default function DashboardPage() {
     const { data, isLoading } = useDashboard()
     const navigate = useNavigate()
     const user = useAuthStore(s => s.user)
-    const isSeekerRole = isSeeker(user?.user_type)
+    const isSeekerRole = isSeeker(user?.user_type ?? undefined)
     console.log('[DASHBOARD] User Role:', user?.user_type, 'Is Seeker:', isSeekerRole)
 
     if (isLoading) {
