@@ -4,19 +4,37 @@
 
 @layer base {
   :root {
-    --background: 222 47% 8%;
-    --surface: 222 47% 12%;
-    --surface-elevated: 222 47% 16%;
-    --surface-hover: 222 47% 19%;
-    --border: 222 30% 20%;
-    --border-subtle: 222 30% 15%;
-    --text: 220 20% 92%;
-    --text-muted: 220 15% 58%;
-    --text-faint: 220 15% 38%;
-    --accent: 245 80% 65%;
-    --accent-rgb: 99, 102, 241;
-    --input-bg: 222 47% 12%;
-    --input-text: 220 20% 92%;
+    /* Grounded Charcoal Base */
+    --background: 222 35% 7%;
+    --surface: 222 28% 10%;
+    --surface-elevated: 222 24% 14%;
+    --surface-hover: 222 20% 18%;
+    --border: 222 18% 20%;
+    --border-subtle: 222 18% 13%;
+    --text: 40 20% 96%;
+    --text-muted: 220 12% 62%;
+    --text-faint: 220 10% 42%;
+
+    /* Primary Accent: Burnt Saffron */
+    --accent: 24 95% 53%;
+    --accent-rgb: 234, 88, 12;
+    --accent-saffron: #ea580c;
+    --accent-saffron-soft: rgba(234, 88, 12, 0.12);
+
+    /* Secondary Accent 1: Sunlit Amber / Warm Brass */
+    --accent-amber: #d97706;
+    --accent-amber-soft: rgba(217, 119, 6, 0.12);
+
+    /* Secondary Accent 2: Industrial Workshop Cobalt / Blueprint */
+    --accent-indigo: #2563eb;
+    --accent-indigo-soft: rgba(37, 99, 235, 0.12);
+
+    /* Secondary Accent 3: Verified Craft Emerald / Mint */
+    --accent-emerald: #059669;
+    --accent-emerald-soft: rgba(5, 150, 105, 0.12);
+
+    --input-bg: 222 28% 10%;
+    --input-text: 40 20% 96%;
   }
 
   * { box-sizing: border-box; }
@@ -112,13 +130,13 @@
 
   /* ── Buttons ── */
   .btn-primary {
-    @apply flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    @apply flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white transition-all duration-150;
+    background: #ea580c;
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
   .btn-primary:hover {
+    background: #f97316;
     transform: translateY(-1px);
-    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.45);
   }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { @apply opacity-50 cursor-not-allowed; transform: none; }
@@ -175,24 +193,24 @@
     border: 1px solid hsl(var(--border));
   }
   .badge-indigo {
-    background: rgba(99,102,241,0.12);
-    color: #a5b4fc;
-    border: 1px solid rgba(99,102,241,0.25);
+    background: rgba(37, 99, 235, 0.12);
+    color: #60a5fa;
+    border: 1px solid rgba(37, 99, 235, 0.25);
   }
   .badge-emerald {
-    background: rgba(52,211,153,0.1);
-    color: #6ee7b7;
-    border: 1px solid rgba(52,211,153,0.2);
+    background: rgba(5, 150, 105, 0.1);
+    color: #34d399;
+    border: 1px solid rgba(5, 150, 105, 0.2);
   }
   .badge-amber {
-    background: rgba(251,191,36,0.1);
-    color: #fde68a;
-    border: 1px solid rgba(251,191,36,0.2);
+    background: rgba(217, 119, 6, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(217, 119, 6, 0.2);
   }
   .badge-rose {
-    background: rgba(251,113,133,0.1);
-    color: #fda4af;
-    border: 1px solid rgba(251,113,133,0.2);
+    background: rgba(225, 29, 72, 0.1);
+    color: #fb7185;
+    border: 1px solid rgba(225, 29, 72, 0.2);
   }
 
   /* ── Nav ── */
@@ -202,7 +220,7 @@
   }
   .nav-link:hover { background: hsl(var(--surface-elevated)); color: hsl(var(--text)); }
   .nav-link.active { background: hsl(var(--surface-elevated)); color: white; }
-  .nav-link.active svg { color: #6366f1; }
+  .nav-link.active svg { color: #ea580c; }
 
   /* ── Stat card ── */
   .stat-card {
@@ -238,21 +256,21 @@
   }
 
   /* ── Role accent tokens ── */
-  /* Seeker: indigo/violet */
-  .accent-seeker { color: #818cf8; }
-  .bg-accent-seeker { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.2); }
+  /* Seeker: cobalt/blueprint */
+  .accent-seeker { color: #60a5fa; }
+  .bg-accent-seeker { background: rgba(37, 99, 235, 0.1); border-color: rgba(37, 99, 235, 0.2); }
 
-  /* Employer: amber/orange */
+  /* Employer: sunlit amber */
   .accent-employer { color: #fbbf24; }
-  .bg-accent-employer { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); }
+  .bg-accent-employer { background: rgba(217, 119, 6, 0.1); border-color: rgba(217, 119, 6, 0.2); }
 
-  /* NGO: emerald/teal */
+  /* NGO: forest emerald */
   .accent-ngo { color: #34d399; }
-  .bg-accent-ngo { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.2); }
+  .bg-accent-ngo { background: rgba(5, 150, 105, 0.1); border-color: rgba(5, 150, 105, 0.2); }
 
-  /* Govt: blue/cyan */
+  /* Govt: industrial slate/cyan */
   .accent-govt { color: #38bdf8; }
-  .bg-accent-govt { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.2); }
+  .bg-accent-govt { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.2); }
 
   /* ── Chat Markdown ── */
   .chat-markdown p { margin-bottom: 0.5rem; }
@@ -309,11 +327,11 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* Glow effects */
-  .glow-indigo { box-shadow: 0 0 20px rgba(99,102,241,0.25); }
-  .glow-emerald { box-shadow: 0 0 20px rgba(52,211,153,0.2); }
-  .glow-amber { box-shadow: 0 0 20px rgba(251,191,36,0.2); }
-  .glow-blue { box-shadow: 0 0 20px rgba(56,189,248,0.2); }
+  /* Subtle tactile focus/accent borders (anti-glow) */
+  .focus-accent { outline: 1px solid var(--accent-saffron); }
+  .border-saffron-subtle { border-color: rgba(234, 88, 12, 0.3); }
+  .border-indigo-subtle { border-color: rgba(37, 99, 235, 0.3); }
+  .border-amber-subtle { border-color: rgba(217, 119, 6, 0.3); }
 
   /* ── Assessment Report Markdown ── */
   .report-markdown h1 { font-size: 1.5rem; font-weight: 800; color: #1e1b4b; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }

@@ -37,14 +37,14 @@ export default function SignupPage() {
     }
 
     return (
-        <div className="min-h-screen py-12 px-4" style={{ background: 'linear-gradient(135deg, hsl(240, 20%, 8%) 0%, hsl(250, 30%, 12%) 50%, hsl(240, 20%, 8%) 100%)' }}>
+        <div className="min-h-screen py-12 px-4 bg-[hsl(var(--background))]">
             <div className="max-w-3xl mx-auto relative z-10">
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
-                        <span className="text-2xl">⚡</span>
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 bg-[#ea580c] text-white">
+                        <span className="text-xl font-bold">S</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-white">Create Account</h1>
-                    <p className="mt-2 text-slate-400">Join SkillBridge AI and start your journey</p>
+                    <h1 className="text-3xl font-bold text-white tracking-tight">Create Account</h1>
+                    <p className="mt-2 text-sm text-[hsl(var(--text-muted))]">Join SANKALP and build your career pathway</p>
                 </div>
 
                 <div className="card p-8">
@@ -57,9 +57,9 @@ export default function SignupPage() {
                                         key={r.id}
                                         type="button"
                                         onClick={() => setRole(r.id)}
-                                        className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all duration-200 ${
+                                        className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all duration-150 ${
                                             role === r.id 
-                                            ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_0_1px_rgba(99,102,241,1)]' 
+                                            ? 'border-[#ea580c] bg-[rgba(234,88,12,0.1)]' 
                                             : 'border-slate-800 bg-slate-900/40 hover:border-slate-700'
                                         }`}
                                     >
