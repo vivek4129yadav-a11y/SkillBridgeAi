@@ -46,6 +46,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
           <AnswerInput 
             questionType={question.question_type}
             options={question.options}
+            questionText={question.question}
             onSubmit={onSubmit}
             isLoading={isLoading}
           />
