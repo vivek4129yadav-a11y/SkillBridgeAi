@@ -61,7 +61,7 @@ export const AssessmentPage: React.FC = () => {
       
     } catch (err: any) {
       const errCode = err?.response?.data?.detail?.error_code;
-      if (errCode === 'OPENAI_RATE_LIMIT') {
+      if (errCode === 'OPENAI_RATE_LIMIT' || errCode === 'AI_RATE_LIMIT' || errCode === 'GEMINI_RATE_LIMIT') {
         if (autoRetryCount < 3) {
           setAutoRetryCount(prev => prev + 1);
           setTimeout(() => handleSubmit(answer), 3000);
@@ -72,7 +72,7 @@ export const AssessmentPage: React.FC = () => {
             variant: "destructive"
           });
         }
-      } else if (errCode === 'OPENAI_QUOTA_EXCEEDED') {
+      } else if (errCode === 'OPENAI_QUOTA_EXCEEDED' || errCode === 'AI_QUOTA_EXCEEDED') {
         setQuotaExceeded(true);
       } else if (errCode === 'ASSESSMENT_NO_RETAKES') {
         toast({
@@ -221,7 +221,7 @@ export const AssessmentPage: React.FC = () => {
         <div className="bg-red-50 text-red-800 p-4 rounded-lg border border-red-200 mb-6 flex items-start gap-3 animate-in fade-in">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="text-sm font-medium">
-            Assessment temporarily unavailable. We've hit our OpenAI quota limit. Please try again in a few hours.
+            Assessment temporarily unavailable due to high AI traffic. Please try again in a few hours.
           </div>
         </div>
       )}
