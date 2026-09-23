@@ -8,7 +8,6 @@ import ProfilePage from '@/modules/profile/ProfilePage'
 import JobsPage from '@/modules/jobs/JobsPage'
 import AdminPage from '@/modules/admin/AdminPage'
 import AppLayout from '@/components/layout/AppLayout'
-import { AssessmentPage } from '@/modules/assessment/AssessmentPage'
 import { GapAnalysisPage } from '@/modules/gap_analysis/GapAnalysisPage'
 import { ResourcesAdmin } from '@/modules/admin/ResourcesAdmin'
 import ResumeAnalysisPage from '@/pages/ResumeAnalysisPage'
@@ -40,7 +39,7 @@ export default function App() {
                 <Route path="/" element={<Protected><AppLayout /></Protected>}>
                     <Route index element={<Navigate to="/dashboard" replace />} />
                     <Route path="dashboard" element={<DashboardPage />} />
-                    <Route path="assessment" element={<AssessmentPage />} />
+                    <Route path="assessment" element={<Navigate to="/resume-analysis" replace />} />
                     <Route path="gap-analysis" element={<GapAnalysisPage />} />
                     <Route path="resume-analysis" element={<ResumeAnalysisPage />} />
                     <Route path="profile" element={<ProfilePage />} />

@@ -7,7 +7,7 @@ import ResumeScoreWidget from '@/components/resume/ResumeScoreWidget'
 import RecommendationsWidget from './widgets/RecommendationsWidget'
 import CareerIdentityCard from './widgets/CareerIdentityCard'
 import SkillGapWidget from './widgets/SkillGapWidget'
-import { AssessmentBanner } from './widgets/AssessmentBanner'
+import { ResumeBanner } from './widgets/ResumeBanner'
 import { GapAnalysisBanner } from './widgets/GapAnalysisBanner'
 
 function useDashboard() {
@@ -48,7 +48,7 @@ export default function DashboardPage() {
 
             {/* Dynamic CTA Banners */}
             <div className="space-y-4">
-                <AssessmentBanner />
+                <ResumeBanner />
                 <GapAnalysisBanner />
             </div>
 
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                             ? data.extracted_skills.map(skill => (
                                 <span key={skill} className="badge" style={{ background: 'rgba(99,102,241,0.1)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.2)' }}>{skill}</span>
                             ))
-                            : <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>Complete the assessment to extract skills.</p>
+                            : <p className="text-xs" style={{ color: 'hsl(220 15% 45%)' }}>Upload a resume to extract skills.</p>
                         }
                     </div>
                     {data.career_interests.length > 0 && (

@@ -47,14 +47,14 @@ export const GapAnalysisPage: React.FC = () => {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Let's get to know your skills first</h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Before we can show your gap analysis, we need to know what you can do. You can either take our quick assessment or upload a resume.
+              Before we can show your gap analysis, we need to know what you can do. Upload and analyze your resume to extract verified skills and match market demands.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => navigate('/assessment')} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
-                Take Skill Assessment
+              <button onClick={() => navigate('/resume-analysis')} className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">
+                Analyze Resume
               </button>
               <button onClick={() => navigate('/profile')} className="px-6 py-3 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg font-bold hover:bg-gray-100 transition">
-                Upload Your Resume
+                Update Profile
               </button>
             </div>
           </div>
