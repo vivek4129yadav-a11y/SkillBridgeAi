@@ -7,6 +7,8 @@ import ResumeScoreWidget from '@/components/resume/ResumeScoreWidget'
 import RecommendationsWidget from './widgets/RecommendationsWidget'
 import CareerIdentityCard from './widgets/CareerIdentityCard'
 import SkillGapWidget from './widgets/SkillGapWidget'
+import { AssessmentBanner } from './widgets/AssessmentBanner'
+import { GapAnalysisBanner } from './widgets/GapAnalysisBanner'
 
 function useDashboard() {
     return useQuery<DashboardData>({
@@ -44,36 +46,11 @@ export default function DashboardPage() {
                 <p className="text-sm mt-1" style={{ color: 'hsl(220 15% 55%)' }}>Here's your career snapshot.</p>
             </div>
 
-            {/* CTA Banners */}
-            {!data.quick_assessment_done && (
-                <div id="assessment-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, rgba(251,146,60,0.15), rgba(234,88,12,0.1))', border: '1px solid rgba(251,146,60,0.3)' }}
-                    onClick={() => navigate('/assessment')}>
-                    <div className="flex items-center gap-3">
-                        <Zap size={20} style={{ color: '#fb923c' }} />
-                        <div>
-                            <p className="font-semibold text-white text-sm">Complete your Quick Assessment</p>
-                            <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Takes 5 minutes — improves your job matches significantly.</p>
-                        </div>
-                    </div>
-                    <span className="text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: 'rgba(251,146,60,0.2)', color: '#fb923c' }}>Start →</span>
-                </div>
-            )}
-
-            {!data.gap_analysis_done && (
-                <div id="gap-analysis-banner" className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(99,102,241,0.3)' }}
-                    onClick={() => navigate('/gap-analysis')}>
-                    <div className="flex items-center gap-3">
-                        <BarChart3 size={20} style={{ color: '#818cf8' }} />
-                        <div>
-                            <p className="font-semibold text-white text-sm">Run Your Skill Gap Analysis</p>
-                            <p className="text-xs" style={{ color: 'hsl(220 15% 60%)' }}>Find exactly what skills you need for your target roles.</p>
-                        </div>
-                    </div>
-                    <span className="text-xs font-medium px-3 py-1.5 rounded-full" style={{ background: 'rgba(99,102,241,0.2)', color: '#818cf8' }}>Analyze →</span>
-                </div>
-            )}
+            {/* Dynamic CTA Banners */}
+            <div className="space-y-4">
+                <AssessmentBanner />
+                <GapAnalysisBanner />
+            </div>
 
             {/* Row 1: Career Identity + Profile Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
