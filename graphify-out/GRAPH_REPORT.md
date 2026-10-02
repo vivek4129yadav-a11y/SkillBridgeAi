@@ -1,16 +1,16 @@
 # Graph Report - frontend  (2026-10-03)
 
 ## Corpus Check
-- 124 files · ~25,929 words
+- 123 files · ~25,344 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 551 nodes · 815 edges · 32 communities (22 shown, 6 thin omitted)
+- 539 nodes · 804 edges · 31 communities (21 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 3 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `01b8122b`
+- Built from commit: `bf1cc1e5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -38,9 +38,8 @@
 - Skeleton.tsx
 - tailwind.config.ts
 - Component Reference
-- SkillBridge AI (SANKALP) — Frontend
-- SkillBridge AI (SANKALP) — Frontend
 - Key Components
+- SkillBridge AI (SANKALP) — Frontend
 - rules/graphify.md
 - workflows/graphify.md
 
@@ -52,26 +51,26 @@
 5. `Component Reference` - 10 edges
 6. `SkillBridge AI (SANKALP) — Frontend` - 8 edges
 7. `Onboarding` - 8 edges
-8. `SkillBridge AI (SANKALP) — Frontend` - 8 edges
-9. `useLanguage` - 7 edges
-10. `compilerOptions` - 7 edges
+8. `useLanguage` - 7 edges
+9. `compilerOptions` - 7 edges
+10. `Key Components` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Protected()` --calls--> `useAuthStore`  [EXTRACTED]
-  frontend/src/App.tsx → frontend/src/store/authStore.ts
+  src/App.tsx → src/store/authStore.ts
 - `useAuth()` --calls--> `useOnboardingStore`  [EXTRACTED]
-  frontend/src/hooks/useAuth.ts → frontend/src/store/onboardingStore.ts
+  src/hooks/useAuth.ts → src/store/onboardingStore.ts
 - `ChatWidget()` --calls--> `useAuthStore`  [EXTRACTED]
-  frontend/src/modules/chat/ChatWidget.tsx → frontend/src/store/authStore.ts
+  src/modules/chat/ChatWidget.tsx → src/store/authStore.ts
 - `JobCardProps` --references--> `Job`  [EXTRACTED]
-  frontend/src/modules/jobs/components/JobCard.tsx → frontend/src/types/index.ts
+  src/modules/jobs/components/JobCard.tsx → src/types/index.ts
 - `LanguageToggle()` --calls--> `useLanguage`  [EXTRACTED]
-  frontend/src/components/LanguageToggle.tsx → frontend/src/hooks/useLanguage.ts
+  src/components/LanguageToggle.tsx → src/hooks/useLanguage.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (32 total, 6 thin omitted)
+## Communities (31 total, 6 thin omitted)
 
 ### Community 0 - "App.tsx"
 Cohesion: 0.07
@@ -95,7 +94,7 @@ Nodes (21): ResumeDropzone(), ResumeDropzoneProps, SkillPicker(), SkillPickerPro
 
 ### Community 5 - "ResumeAnalysisPage.tsx"
 Cohesion: 0.09
-Nodes (20): ExtractedProfile(), ResumeUpload(), ResumeUploadProps, STEPS, AnalysisStepper(), AnalysisStepperProps, FileDropzone(), FileDropzoneProps (+12 more)
+Nodes (21): ExtractedProfile(), ResumeUpload(), ResumeUploadProps, STEPS, SuggestionCards(), AnalysisStepper(), AnalysisStepperProps, FileDropzone() (+13 more)
 
 ### Community 6 - "devDependencies"
 Cohesion: 0.07
@@ -107,7 +106,7 @@ Nodes (16): LanguageToggle(), AppLayout(), titles, Topbar(), LanguageState, useL
 
 ### Community 8 - "SuggestionCards.tsx"
 Cohesion: 0.12
-Nodes (17): BulletImprovementResult(), BulletImprovementResultProps, BulletImprover(), SuggestionCards(), BulletImprovementsList(), BulletImprovementsListProps, IndiaFlagsCard(), IndiaFlagsCardProps (+9 more)
+Nodes (16): BulletImprovementResult(), BulletImprovementResultProps, BulletImprover(), BulletImprovementsList(), BulletImprovementsListProps, IndiaFlagsCard(), IndiaFlagsCardProps, ReframePhrasingCard() (+8 more)
 
 ### Community 9 - "compilerOptions"
 Cohesion: 0.08
@@ -149,36 +148,32 @@ Nodes (5): AssessmentHistoryItem, AssessmentSession, AssessmentStatus, Question,
 Cohesion: 0.07
 Nodes (29): Admin, AdminPage, AppLayout, Auth, AuthPage, Chat, ChatWidget, Component Reference (+21 more)
 
-### Community 27 - "SkillBridge AI (SANKALP) — Frontend"
-Cohesion: 0.17
-Nodes (11): Architecture, Engineering, Environment Variables, Getting Started, Installation, Prerequisites, Project, Routes (+3 more)
+### Community 27 - "Key Components"
+Cohesion: 0.22
+Nodes (8): 1. `ResumeUpload.tsx`, 2. `ScoreDashboard.tsx` & `ScoreRing.tsx`, 3. `SuggestionCards.tsx`, 4. `BulletImprover.tsx`, 5. `ExtractedProfile.tsx`, Integration, Key Components, Resume Analysis UI Documentation
 
 ### Community 28 - "SkillBridge AI (SANKALP) — Frontend"
 Cohesion: 0.17
 Nodes (11): Architecture, Engineering, Environment Variables, Getting Started, Installation, Prerequisites, Project, Routes (+3 more)
 
-### Community 29 - "Key Components"
-Cohesion: 0.22
-Nodes (8): 1. `ResumeUpload.tsx`, 2. `ScoreDashboard.tsx` & `ScoreRing.tsx`, 3. `SuggestionCards.tsx`, 4. `BulletImprover.tsx`, 5. `ExtractedProfile.tsx`, Integration, Key Components, Resume Analysis UI Documentation
-
 ## Knowledge Gaps
-- **196 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+191 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 233 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **187 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+182 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 223 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `api` connect `App.tsx` to `GapAnalysisPage.tsx`, `DashboardPage.tsx`, `OnboardingPage.tsx`, `GovernmentDashboard.tsx`, `MockInterviewPage.tsx`, `SkillBubbleGrid.tsx`, `ResourcesAdmin.tsx`?**
-  _High betweenness centrality (0.057) - this node is a cross-community bridge._
+  _High betweenness centrality (0.059) - this node is a cross-community bridge._
 - **Why does `useAuthStore` connect `App.tsx` to `ChatWidget.tsx`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `devDependencies`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `useAuth()` (e.g. with `handleLogout()` and `requestOTP()`) actually correct?**
   _`useAuth()` has 3 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `name`, `private`, `version` to the rest of the system?**
-  _196 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _187 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `App.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06868686868686869 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
