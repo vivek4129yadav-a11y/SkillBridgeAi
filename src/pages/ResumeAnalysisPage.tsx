@@ -74,11 +74,23 @@ const ResumeAnalysisPage: React.FC = () => {
         { id: 'profile', label: 'Extracted Profile', icon: User },
     ] as const
 
-    const updatedAt = new Date(data.updated_at).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    })
+    const formatUpdatedDate = () => {
+        const rawDate = data?.updated_at || data?.created_at
+        if (rawDate) {
+            const d = new Date(rawDate)
+            if (!isNaN(d.getTime())) {
+                return d.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                })
+            }
+        }
+        return 'Just now'
+    }
+
+    const updatedAt = formatUpdatedDate()
+    const candidateName = data?.structured_profile?.full_name || 'Your Resume'
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl space-y-8 animate-fade-in">
@@ -87,7 +99,7 @@ const ResumeAnalysisPage: React.FC = () => {
                 <div className="space-y-1">
                     <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded">Analysis Live</span>
                     <h1 className="text-3xl font-extrabold text-slate-900">
-                        {data.structured_profile.full_name || 'Your Resume'}
+                        {candidateName}
                     </h1>
                     <p className="text-sm text-slate-500 font-medium">Last updated on {updatedAt}</p>
                 </div>
@@ -130,9 +142,22 @@ const ResumeAnalysisPage: React.FC = () => {
 
             {/* Content Area */}
             <main className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-                {activeTab === 'score' && <ScoreDashboard qualityScores={data.quality_scores} targetRoles={data.target_roles} />}
-                {activeTab === 'suggestions' && <SuggestionCards suggestions={data.suggestions} />}
-                {activeTab === 'profile' && <ExtractedProfile structuredProfile={data.structured_profile} />}
+                {activeTab === 'score' && (
+                    <ScoreDashboard 
+                        qualityScores={data?.quality_scores || {}} 
+                        targetRoles={data?.target_roles || []} 
+                    />
+                )}
+                {activeTab === 'suggestions' && (
+                    <SuggestionCards 
+                        suggestions={data?.suggestions || {}} 
+                    />
+                )}
+                {activeTab === 'profile' && (
+                    <ExtractedProfile 
+                        structuredProfile={data?.structured_profile || {}} 
+                    />
+                )}
             </main>
         </div>
     )

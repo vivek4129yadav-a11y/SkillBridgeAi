@@ -15,11 +15,18 @@ interface ScoreDashboardProps {
     targetRoles?: string[]
 }
 
-const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRoles = [] }) => {
+const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores = {} as any, targetRoles = [] }) => {
+    const overall = qualityScores?.overall ?? 0
+    const atsMatching = qualityScores?.ats_compatibility ?? 0
+    const quantification = qualityScores?.quantification_score ?? 0
+    const completeness = qualityScores?.section_completeness ?? 0
+    const atsIssues = Array.isArray(qualityScores?.ats_issues) ? qualityScores.ats_issues : []
+    const missingSections = Array.isArray(qualityScores?.missing_sections) ? qualityScores.missing_sections : []
+
     return (
         <div className="space-y-8 animate-fade-in">
             {/* Target Roles Badge Display */}
-            {targetRoles.length > 0 && (
+            {targetRoles && targetRoles.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Targeting:</span>
                     {targetRoles.map((role, idx) => (
@@ -37,21 +44,21 @@ const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRo
             <div className="grid grid-cols-2 md:flex md:justify-around gap-6 items-end">
                 <div className="order-1 md:order-none">
                     <ScoreRing
-                        score={qualityScores.overall}
+                        score={overall}
                         label="Overall Score"
                         size="lg"
                     />
                 </div>
                 <ScoreRing
-                    score={qualityScores.ats_compatibility}
+                    score={atsMatching}
                     label="ATS Matching"
                 />
                 <ScoreRing
-                    score={qualityScores.quantification_score}
+                    score={quantification}
                     label="Quantification"
                 />
                 <ScoreRing
-                    score={qualityScores.section_completeness}
+                    score={completeness}
                     label="Completeness"
                 />
             </div>
@@ -59,14 +66,14 @@ const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRo
             {/* Issues & Warnings */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
                 {/* ATS Issues */}
-                {qualityScores.ats_issues.length > 0 && (
+                {atsIssues.length > 0 && (
                     <div className="space-y-2">
                         <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-red-500"></span>
                             ATS Critical Issues
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                            {qualityScores.ats_issues.map((issue, idx) => (
+                            {atsIssues.map((issue: string, idx: number) => (
                                 <span
                                     key={idx}
                                     className="px-3 py-1 bg-red-50 text-red-600 text-xs font-medium rounded-full border border-red-100"
@@ -79,14 +86,14 @@ const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRo
                 )}
 
                 {/* Missing Sections */}
-                {qualityScores.missing_sections.length > 0 && (
+                {missingSections.length > 0 && (
                     <div className="space-y-2">
                         <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                             Missing Sections
                         </h4>
                         <div className="flex flex-wrap gap-2">
-                            {qualityScores.missing_sections.map((section, idx) => (
+                            {missingSections.map((section: string, idx: number) => (
                                 <span
                                     key={idx}
                                     className="px-3 py-1 bg-orange-50 text-orange-600 text-xs font-medium rounded-full border border-orange-100"
@@ -99,7 +106,7 @@ const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ qualityScores, targetRo
                 )}
             </div>
 
-            {qualityScores.ats_issues.length === 0 && qualityScores.missing_sections.length === 0 && (
+            {atsIssues.length === 0 && missingSections.length === 0 && (
                 <div className="p-4 bg-green-50 border border-green-100 rounded-xl text-center">
                     <p className="text-green-700 text-sm">
                         ✨ Your resume structure looks great! No critical ATS issues or missing sections found.

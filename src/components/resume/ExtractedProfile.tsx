@@ -47,13 +47,17 @@ interface ExtractedProfileProps {
     structuredProfile: StructuredProfile
 }
 
-const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }) => {
-    // skills is now a list of objects
-    const skillsByLevel = (structuredProfile.skills || []).reduce((acc, skillObj) => {
-        const level = (skillObj.level || 'intermediate').toLowerCase() as 'advanced' | 'intermediate' | 'beginner'
+const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile = {} as any }) => {
+    const rawSkills = structuredProfile?.skills || []
+    const skillsByLevel = rawSkills.reduce((acc: Record<string, string[]>, skillObj: any) => {
+        const skillName = typeof skillObj === 'string' ? skillObj : (skillObj?.name || '')
+        if (!skillName) return acc
+        const rawLevel = typeof skillObj === 'object' && skillObj?.level ? skillObj.level : 'intermediate'
+        const level = String(rawLevel).toLowerCase() as 'advanced' | 'intermediate' | 'beginner'
         const capitalizedLevel = (level.charAt(0).toUpperCase() + level.slice(1)) as 'Advanced' | 'Intermediate' | 'Beginner'
-        if (!acc[capitalizedLevel]) acc[capitalizedLevel] = []
-        acc[capitalizedLevel].push(skillObj.name)
+        const key = ['Advanced', 'Intermediate', 'Beginner'].includes(capitalizedLevel) ? capitalizedLevel : 'Intermediate'
+        if (!acc[key]) acc[key] = []
+        acc[key].push(skillName)
         return acc
     }, {} as Record<string, string[]>)
 
@@ -63,13 +67,31 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
         Beginner: { color: 'bg-slate-100 text-slate-600', label: 'Beginner' }
     }
 
-    const trajectory = structuredProfile.career_trajectory || { direction: 'unclear', summary: '' }
+    const rawTrajectory = structuredProfile?.career_trajectory
+    const trajectory = (typeof rawTrajectory === 'object' && rawTrajectory !== null)
+        ? {
+            direction: String(rawTrajectory.direction || 'unclear').toLowerCase(),
+            summary: rawTrajectory.summary || '',
+        }
+        : {
+            direction: 'unclear',
+            summary: typeof rawTrajectory === 'string' ? rawTrajectory : '',
+        }
+
     const directionColors: Record<string, string> = {
         ascending: 'bg-green-50 text-green-600 border border-green-100',
         lateral: 'bg-blue-50 text-blue-600 border border-blue-100',
         descending: 'bg-orange-50 text-orange-600 border border-orange-100',
         unclear: 'bg-slate-50 text-slate-500 border border-slate-100'
     }
+
+    const experiences = (structuredProfile?.experiences || []).map((exp: any) => ({
+        role: exp?.role || 'Professional Role',
+        company: exp?.company || 'Organization',
+        duration: exp?.duration || (exp?.duration_months ? `${exp.duration_months} months` : 'Completed'),
+        achievements: Array.isArray(exp?.achievements) ? exp.achievements : [],
+        responsibilities: Array.isArray(exp?.responsibilities) ? exp.responsibilities : [],
+    }))
 
     return (
         <div className="space-y-12 animate-fade-in">
@@ -88,7 +110,7 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
                                 {level}
                             </h4>
                             <div className="flex flex-wrap gap-2">
-                                {skillsByLevel[level]?.map((skill, idx) => (
+                                {skillsByLevel[level]?.map((skill: string, idx: number) => (
                                     <span 
                                         key={idx} 
                                         className={`px-3 py-1 rounded-lg text-xs font-semibold shadow-sm ${levelConfig[level].color}`}
@@ -114,7 +136,7 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
                     </div>
                     <div className={`flex flex-col items-end gap-1`}>
                         <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                            directionColors[trajectory.direction.toLowerCase()] || directionColors.unclear
+                            directionColors[trajectory.direction] || directionColors.unclear
                         }`}>
                             <TrendingUp className="w-4 h-4" />
                             Path: {trajectory.direction}
@@ -128,37 +150,41 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
                 </div>
                 
                 <div className="relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
-                    {structuredProfile.experiences.map((exp, idx) => (
-                        <div key={idx} className="relative group">
-                            <div className="absolute -left-8 top-1.5 w-6 h-6 bg-white border-2 border-indigo-400 rounded-full group-hover:bg-indigo-400 transition-colors"></div>
-                            <div className="space-y-1">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
-                                    <h4 className="font-bold text-slate-900">{exp.role}</h4>
-                                    <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">{exp.duration}</span>
-                                </div>
-                                <p className="text-sm font-medium text-indigo-600">{exp.company}</p>
-                                
-                                <div className="mt-3 flex items-center gap-2">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Impact</span>
-                                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden flex">
-                                        <div 
-                                            className="h-full bg-indigo-500" 
-                                            style={{ width: `${(exp.achievements.length / (exp.achievements.length + exp.responsibilities.length || 1)) * 100}%` }}
-                                        />
+                    {experiences.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">No formal work experiences detected.</p>
+                    ) : (
+                        experiences.map((exp: any, idx: number) => (
+                            <div key={idx} className="relative group">
+                                <div className="absolute -left-8 top-1.5 w-6 h-6 bg-white border-2 border-indigo-400 rounded-full group-hover:bg-indigo-400 transition-colors"></div>
+                                <div className="space-y-1">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
+                                        <h4 className="font-bold text-slate-900">{exp.role}</h4>
+                                        <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">{exp.duration}</span>
                                     </div>
-                                    <span className="text-[10px] font-bold text-indigo-500">
-                                        {exp.achievements.length} Achievements
-                                    </span>
-                                </div>
-                                
-                                <div className="mt-2 space-y-1">
-                                    {exp.achievements.slice(0, 2).map((a, i) => (
-                                        <p key={i} className="text-[11px] text-slate-600 line-clamp-1">• {a}</p>
-                                    ))}
+                                    <p className="text-sm font-medium text-indigo-600">{exp.company}</p>
+                                    
+                                    <div className="mt-3 flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Impact</span>
+                                        <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div 
+                                                className="h-full bg-indigo-500" 
+                                                style={{ width: `${(exp.achievements.length / (exp.achievements.length + exp.responsibilities.length || 1)) * 100}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] font-bold text-indigo-500">
+                                            {exp.achievements.length} Achievements
+                                        </span>
+                                    </div>
+                                    
+                                    <div className="mt-2 space-y-1">
+                                        {exp.achievements.slice(0, 2).map((a: string, i: number) => (
+                                            <p key={i} className="text-[11px] text-slate-600 line-clamp-1">• {a}</p>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </section>
 
@@ -170,7 +196,7 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
                         <h3 className="text-lg font-bold text-slate-800">Education</h3>
                     </div>
                     <div className="space-y-4">
-                        {(structuredProfile.education || []).map((edu, idx) => (
+                        {(structuredProfile.education || []).map((edu: any, idx: number) => (
                             <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:shadow-sm transition-all">
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-1">
@@ -199,7 +225,7 @@ const ExtractedProfile: React.FC<ExtractedProfileProps> = ({ structuredProfile }
                         Detected based on markers in your work descriptions and accomplishments.
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {(structuredProfile.soft_skills_inferred || []).map((skill, idx) => (
+                        {(structuredProfile.soft_skills_inferred || []).map((skill: string, idx: number) => (
                             <div 
                                 key={idx} 
                                 className="group relative flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-amber-300 hover:text-amber-700 transition-all cursor-help"
