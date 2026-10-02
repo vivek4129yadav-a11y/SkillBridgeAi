@@ -1,17 +1,14 @@
-/**
- * SkillGapWidget — Shows skill gap data as circular progress rings.
- * Uses the gap analysis data from /gap-analysis/report endpoint.
- */
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '@/lib/api'
+import { CircularProgress } from './CircularProgress'
 
 interface GapItem {
     skill: string
-    current_level: number    // 0–100
-    required_level: number   // 0–100
-    gap_pct: number          // positive = gap, negative = surplus
+    current_level: number
+    required_level: number
+    gap_pct: number
     priority: 'high' | 'medium' | 'low'
 }
 
@@ -21,43 +18,22 @@ interface GapAnalysis {
     gaps: GapItem[]
 }
 
-function useGapAnalysis() {
-    return useQuery<GapAnalysis>({
-        queryKey: ['gap-analysis-summary'],
-        queryFn: async () => {
-            const { data } = await api.get('/gap-analysis/report')
-            return data.data
-        },
-        retry: 1,
-    })
-}
-
 const PRIORITY_COLORS: Record<string, string> = {
     high: '#f87171',
     medium: '#fb923c',
     low: '#4ade80',
 }
 
-function CircularProgress({ pct, color }: { pct: number; color: string }) {
-    const r = 18
-    const circumference = 2 * Math.PI * r
-    const offset = circumference * (1 - Math.min(pct, 100) / 100)
-    return (
-        <svg width="44" height="44" viewBox="0 0 44 44" className="-rotate-90">
-            <circle cx="22" cy="22" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
-            <circle cx="22" cy="22" r={r} fill="none" stroke={color} strokeWidth="4"
-                strokeDasharray={circumference}
-                strokeDashoffset={offset}
-                strokeLinecap="round"
-                className="transition-all duration-700"
-            />
-        </svg>
-    )
-}
-
 export default function SkillGapWidget() {
-    const { data, isLoading, isError } = useGapAnalysis()
     const navigate = useNavigate()
+    const { data, isLoading, isError } = useQuery<GapAnalysis>({
+        queryKey: ['gap-analysis-summary'],
+        queryFn: async () => {
+            const { data: res } = await api.get('/gap-analysis/report')
+            return res.data
+        },
+        retry: 1,
+    })
 
     if (isLoading) {
         return (
@@ -72,8 +48,10 @@ export default function SkillGapWidget() {
 
     if (isError || !data) {
         return (
-            <div className="card p-6 border-dashed border-white/10 bg-transparent text-center space-y-2 cursor-pointer hover:border-indigo-500/30 transition-colors"
-                onClick={() => navigate('/gap-analysis')}>
+            <div 
+                className="card p-6 border-dashed border-white/10 bg-transparent text-center space-y-2 cursor-pointer hover:border-indigo-500/30 transition-colors"
+                onClick={() => navigate('/gap-analysis')}
+            >
                 <BarChart3 size={28} className="mx-auto text-indigo-400 opacity-40" />
                 <p className="text-sm font-medium text-white/50">No gap analysis yet</p>
                 <p className="text-xs text-indigo-400 hover:underline">Run gap analysis →</p>
@@ -97,7 +75,6 @@ export default function SkillGapWidget() {
                 </div>
             </div>
 
-            {/* Overall readiness bar */}
             <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                 <div
                     className="h-full rounded-full transition-all duration-1000"

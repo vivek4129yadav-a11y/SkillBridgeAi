@@ -1,34 +1,10 @@
 import { useState, useCallback } from 'react'
 import api from '@/lib/api'
+import { DOMAIN_SEEDS } from './domainSeeds'
+import { Bubble, SkillBubbleGridProps } from './types'
+import { SkillBubbleButton } from './SkillBubbleButton'
 
-// Predefined seed skills per career domain
-const DOMAIN_SEEDS: Record<string, string[]> = {
-    technology:    ['Python', 'JavaScript', 'SQL', 'Cloud', 'DevOps'],
-    healthcare:    ['Patient Care', 'Pharmacology', 'Medical Records', 'Nursing', 'First Aid'],
-    logistics:     ['Warehouse Management', 'Inventory', 'Supply Chain', 'Logistics', 'Procurement'],
-    agriculture:   ['Crop Management', 'Irrigation', 'Soil Science', 'Agronomy', 'Farming'],
-    manufacturing: ['Quality Control', 'CNC Operation', 'Welding', 'Machine Operation', 'Lean'],
-    hospitality:   ['Customer Service', 'Hotel Management', 'F&B Service', 'Housekeeping', 'Tourism'],
-    finance:       ['Accounting', 'Tally ERP', 'GST Filing', 'Financial Analysis', 'Banking'],
-    education:     ['Teaching', 'Curriculum Design', 'Classroom Management', 'E-Learning', 'Training'],
-    construction:  ['Civil Engineering', 'AutoCAD', 'Site Management', 'Estimating', 'Safety'],
-    retail:        ['Sales', 'Merchandising', 'Inventory', 'POS Systems', 'Customer Handling'],
-    general:       ['Communication', 'MS Office', 'Team Leadership', 'Problem Solving', 'Data Entry'],
-}
-
-interface Bubble {
-    id: string
-    label: string
-    kind: 'seed' | 'related'
-    selected: boolean
-}
-
-interface Props {
-    domain: string
-    onSelectionChange: (skills: string[]) => void
-}
-
-export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
+export default function SkillBubbleGrid({ domain, onSelectionChange }: SkillBubbleGridProps) {
     const seeds = DOMAIN_SEEDS[domain] ?? DOMAIN_SEEDS.general
     const [bubbles, setBubbles] = useState<Bubble[]>(
         seeds.map(s => ({ id: s, label: s, kind: 'seed', selected: false }))
@@ -42,7 +18,6 @@ export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
 
     async function handleBubbleClick(bubble: Bubble) {
         if (bubble.kind === 'seed' && expandedSeed !== bubble.id) {
-            // Toggle off previous expansion and fetch related
             setExpandedSeed(bubble.id)
             setLoading(true)
             try {
@@ -59,9 +34,7 @@ export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
                     selected: false,
                 }))
                 setBubbles(prev => {
-                    // Remove old related from this seed, keep rest
                     const kept = prev.filter(b => !b.id.startsWith(`${bubble.id}::`))
-                    // Toggle selection of the clicked seed
                     const updated = kept.map(b =>
                         b.id === bubble.id ? { ...b, selected: !b.selected } : b
                     )
@@ -70,7 +43,6 @@ export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
                     return final
                 })
             } catch {
-                // silently ignore — just toggle selection
                 setBubbles(prev => {
                     const updated = prev.map(b =>
                         b.id === bubble.id ? { ...b, selected: !b.selected } : b
@@ -82,7 +54,6 @@ export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
                 setLoading(false)
             }
         } else {
-            // Simple toggle for related or already-expanded seed
             setBubbles(prev => {
                 const updated = prev.map(b =>
                     b.id === bubble.id ? { ...b, selected: !b.selected } : b
@@ -112,32 +83,15 @@ export default function SkillBubbleGrid({ domain, onSelectionChange }: Props) {
             </div>
 
             <div className="flex flex-wrap gap-2 min-h-24 relative">
-                {bubbles.map((b, idx) => {
-                    const isSeed = b.kind === 'seed'
-                    const isExpanded = expandedSeed === b.id
-                    return (
-                        <button
-                            key={b.id}
-                            type="button"
-                            onClick={() => handleBubbleClick(b)}
-                            className="px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer"
-                            style={{
-                                animationDelay: `${idx * 40}ms`,
-                                ...(b.selected
-                                    ? { background: 'rgba(99,102,241,0.25)', borderColor: '#6366f1', color: '#818cf8', border: '1.5px solid', boxShadow: '0 0 12px rgba(99,102,241,0.3)' }
-                                    : isSeed
-                                    ? { background: 'hsl(222 47% 18%)', border: '1px solid hsl(222 30% 28%)', color: 'hsl(220 20% 75%)' }
-                                    : { background: 'hsl(222 47% 14%)', border: '1px dashed hsl(222 30% 24%)', color: 'hsl(220 15% 55%)', fontSize: '0.75rem' }),
-                                ...(isExpanded && !b.selected
-                                    ? { borderColor: 'hsl(200 80% 60%)', color: 'hsl(200 80% 75%)' }
-                                    : {}),
-                            }}
-                        >
-                            {isSeed && '◉ '}
-                            {b.label}
-                        </button>
-                    )
-                })}
+                {bubbles.map((b, idx) => (
+                    <SkillBubbleButton
+                        key={b.id}
+                        bubble={b}
+                        isExpanded={expandedSeed === b.id}
+                        animationDelayIndex={idx}
+                        onClick={() => handleBubbleClick(b)}
+                    />
+                ))}
                 {loading && (
                     <div className="flex items-center gap-1.5 px-3 py-1.5" style={{ color: 'hsl(220 15% 45%)' }}>
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }} />
