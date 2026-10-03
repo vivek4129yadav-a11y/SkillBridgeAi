@@ -80,38 +80,16 @@ export interface Job {
 }
 
 // --- Dashboard ---
-export interface Skill {
-    name: string
-    proficiency: string
-    level: number
-}
-
 export interface DashboardData {
     user: { name: string; user_type: string | null; preferred_lang: string }
     profile_completion_pct: number
     onboarding_done: boolean
     quick_assessment_done: boolean
     gap_analysis_done: boolean
-    gap_analysis_stale: boolean
-    last_assessment_at: string | null
-    extracted_skills: Skill[]
+    extracted_skills: string[]
     career_interests: string[]
     location: { state: string | null; city: string | null }
     job_matches: Partial<Job>[]
-    recommended_courses?: any[]
-    role_specific?: {
-        variant: string
-        career_pathways?: any[]
-        competitive_exams?: any[]
-        internships?: any[]
-        trade_pulse?: any
-        apprenticeships?: any[]
-        trade_tips?: string
-        micro_biz_ideas?: string[]
-        govt_schemes?: any[]
-        digital_tips?: string[]
-    }
-    ai_highlight?: string
 }
 
 // --- API wrapper ---

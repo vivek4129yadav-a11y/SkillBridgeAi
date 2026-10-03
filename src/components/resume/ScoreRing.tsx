@@ -6,7 +6,8 @@ interface ScoreRingProps {
     size?: 'sm' | 'md' | 'lg'
 }
 
-const ScoreRing: React.FC<ScoreRingProps> = ({ score, label, size = 'md' }) => {
+const ScoreRing: React.FC<ScoreRingProps> = ({ score = 0, label, size = 'md' }) => {
+    const safeScore = typeof score === 'number' && !isNaN(score) ? Math.min(100, Math.max(0, Math.round(score))) : 0
     const [offset, setOffset] = useState(0)
 
     const sizes = {
@@ -15,15 +16,15 @@ const ScoreRing: React.FC<ScoreRingProps> = ({ score, label, size = 'md' }) => {
         lg: { ring: 140, stroke: 10, font: 'text-3xl' }
     }
 
-    const { ring, stroke, font } = sizes[size]
+    const { ring, stroke, font } = sizes[size] || sizes.md
     const radius = (ring - stroke) / 2
     const circumference = radius * 2 * Math.PI
 
     useEffect(() => {
-        const progressOffset = ((100 - score) / 100) * circumference
+        const progressOffset = ((100 - safeScore) / 100) * circumference
         const timer = setTimeout(() => setOffset(progressOffset), 100)
         return () => clearTimeout(timer)
-    }, [score, circumference])
+    }, [safeScore, circumference])
 
     const getColor = (s: number) => {
         if (s <= 40) return '#ef4444' // red-500
@@ -31,7 +32,7 @@ const ScoreRing: React.FC<ScoreRingProps> = ({ score, label, size = 'md' }) => {
         return '#22c55e' // green-500
     }
 
-    const color = getColor(score)
+    const color = getColor(safeScore)
 
     return (
         <div className="flex flex-col items-center">
