@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import SkillBubbleGrid from '@/components/skills/SkillBubbleGrid'
 
 const CAREER_OPTIONS = ['technology', 'healthcare', 'logistics', 'agriculture', 'manufacturing', 'hospitality', 'finance', 'education', 'construction', 'retail']
 
@@ -15,6 +16,7 @@ export default function Step3_Preferences({ onNext, loading }: Props) {
     const [workType, setWorkType] = useState('any')
     const [relocate, setRelocate] = useState(false)
     const [targetRoles, setTargetRoles] = useState('')
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([])
 
     function toggleInterest(i: string) {
         setInterests(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i])
@@ -29,8 +31,11 @@ export default function Step3_Preferences({ onNext, loading }: Props) {
             work_type: workType,
             willing_to_relocate: relocate,
             target_roles: targetRoles.split(',').map(r => r.trim()).filter(Boolean),
+            skill_tags: selectedSkills,
         })
     }
+
+    const primaryDomain = interests[0] ?? 'general'
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -54,6 +59,22 @@ export default function Step3_Preferences({ onNext, loading }: Props) {
                     ))}
                 </div>
             </div>
+
+            {/* Skill Bubble Grid — shown after at least 1 interest is selected */}
+            {interests.length > 0 && (
+                <div
+                    className="rounded-xl p-4 border"
+                    style={{ background: 'hsl(222 47% 11%)', borderColor: 'hsl(222 30% 20%)' }}
+                >
+                    <label className="block text-sm font-medium mb-3" style={{ color: 'hsl(220 20% 80%)' }}>
+                        Select Your Skills
+                    </label>
+                    <SkillBubbleGrid
+                        domain={primaryDomain}
+                        onSelectionChange={setSelectedSkills}
+                    />
+                </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
                 <div>

@@ -4,18 +4,20 @@ import logger from '@/lib/logger'
 const log = logger('RESUME_SERVICE')
 
 export interface ResumeAnalysisService {
-    uploadAndAnalyzeResume: (file: File, targetRole?: string) => Promise<{ data?: any, error?: any }>
+    uploadAndAnalyzeResume: (file: File, targetRoles?: string[]) => Promise<{ data?: any, error?: any }>
     getLatestAnalysis: () => Promise<{ data?: any, error?: any }>
     getScoreBreakdown: () => Promise<{ data?: any, error?: any }>
-    improveBullet: (bullet: string, targetRole?: string) => Promise<{ data?: any, error?: any }>
+    improveBullet: (bullet: string, targetRoles?: string[]) => Promise<{ data?: any, error?: any }>
 }
 
 const resumeAnalysisService = {
-    async uploadAndAnalyzeResume(file: File, targetRole?: string) {
+    async uploadAndAnalyzeResume(file: File, targetRoles?: string[]) {
         log.info('uploadAndAnalyzeResume starting...')
         const formData = new FormData()
         formData.append('file', file)
-        if (targetRole) formData.append('target_role', targetRole)
+        if (targetRoles && targetRoles.length > 0) {
+            targetRoles.forEach(role => formData.append('target_roles', role))
+        }
 
         try {
             const { data } = await api.post('/api/v1/resume/analyze', formData, {
@@ -50,12 +52,12 @@ const resumeAnalysisService = {
         }
     },
 
-    async improveBullet(bullet: string, targetRole?: string) {
+    async improveBullet(bullet: string, targetRoles?: string[]) {
         log.info('improveBullet starting...')
         try {
             const { data } = await api.post('/api/v1/resume/improve-bullet', {
                 bullet: bullet,
-                target_role: targetRole || null
+                target_roles: targetRoles && targetRoles.length > 0 ? targetRoles : null
             })
             return { data }
         } catch (error: any) {

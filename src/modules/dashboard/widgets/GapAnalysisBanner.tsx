@@ -23,12 +23,12 @@ export const GapAnalysisBanner: React.FC = () => {
                     <div className="p-2 bg-blue-100/50 rounded-xl shrink-0"><Search size={24} style={{ color: '#2563eb' }} /></div>
                     <div>
                         <p className="font-bold text-blue-900 text-base">🔍 Run Your Gap Analysis</p>
-                        <p className="text-sm font-medium mt-1 text-blue-800/80">Complete your assessment or upload a resume first.</p>
+                        <p className="text-sm font-medium mt-1 text-blue-800/80">Upload your resume first to analyze skill gaps.</p>
                     </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <button onClick={() => navigate('/assessment')} className="whitespace-nowrap w-full sm:w-auto text-sm font-bold px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
-                        Take Assessment
+                    <button onClick={() => navigate('/resume-analysis')} className="whitespace-nowrap w-full sm:w-auto text-sm font-bold px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+                        Analyze Resume
                     </button>
                     <button onClick={() => navigate('/profile')} className="whitespace-nowrap w-full sm:w-auto text-sm font-bold px-4 py-2 bg-white text-blue-700 border border-blue-200 rounded-xl hover:bg-blue-50 transition">
                         Upload Resume

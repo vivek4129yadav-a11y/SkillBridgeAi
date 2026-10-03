@@ -1,10 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/authStore'
 import LoginForm from './LoginForm'
 import OTPVerifyForm from './OTPVerifyForm'
+import DemoLoginBar from '@/components/auth/DemoLoginBar'
 
 export default function AuthPage() {
     const [step, setStep] = useState<'login' | 'verify'>('login')
     const [email, setEmail] = useState('')
+    
+    const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/', { replace: true })
+        }
+    }, [isAuthenticated, navigate])
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg, hsl(240, 20%, 8%) 0%, hsl(250, 30%, 12%) 50%, hsl(240, 20%, 8%) 100%)' }}>
@@ -30,6 +42,7 @@ export default function AuthPage() {
                     ) : (
                         <OTPVerifyForm email={email} onBack={() => setStep('login')} />
                     )}
+                    <DemoLoginBar />
                 </div>
             </div>
         </div>

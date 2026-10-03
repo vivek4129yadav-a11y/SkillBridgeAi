@@ -10,7 +10,6 @@ interface User {
     user_type: string | null
     preferred_lang: string
     onboarding_done: boolean
-    onboarding_step: number
 }
 
 interface AuthState {
@@ -18,9 +17,9 @@ interface AuthState {
     accessToken: string | null
     refreshToken: string | null
     isAuthenticated: boolean
-    setAuth: (user: User, accessToken: string, refreshToken: string) => void
-    setTokens: (accessToken: string, refreshToken: string) => void
+    setTokens: (access: string, refresh: string) => void
     setUser: (user: User) => void
+    setAuth: (access: string, user: any) => void
     logout: () => void
 }
 
@@ -32,17 +31,18 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: null,
             isAuthenticated: false,
 
-            setAuth: (user, accessToken, refreshToken) => {
-                log.info('Auth set in memory')
-                set({ user, accessToken, refreshToken, isAuthenticated: true })
-            },
-
             setTokens: (accessToken, refreshToken) => {
-                set({ accessToken, refreshToken })
+                log.info('Tokens stored')
+                set({ accessToken, refreshToken, isAuthenticated: true })
             },
 
             setUser: (user) => {
                 set({ user })
+            },
+
+            setAuth: (accessToken, user) => {
+                log.info('Auth success')
+                set({ accessToken, user, isAuthenticated: true })
             },
 
             logout: () => {
@@ -51,7 +51,13 @@ export const useAuthStore = create<AuthState>()(
             },
         }),
         {
-            name: 'auth-storage',
+            name: 'skillbridge-auth',
+            partialize: (state) => ({
+                accessToken: state.accessToken,
+                refreshToken: state.refreshToken,
+                user: state.user,
+                isAuthenticated: state.isAuthenticated,
+            }),
         }
     )
 )

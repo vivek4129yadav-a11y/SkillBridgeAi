@@ -1,127 +1,95 @@
-# SANKALP Frontend
+# SkillBridge AI (SANKALP) — Frontend
 
-React single-page app for SANKALP. Built with TypeScript, Vite, and Tailwind CSS.
-
----
-
-## Requirements
-
-- Node.js 18 or newer (Node.js 20 LTS recommended)
-- npm 9 or newer
-
-Check your versions:
-
-```bash
-node -v
-npm -v
-```
+Web client for the SANKALP AI career guidance and job matching platform.
 
 ---
 
-## Installation
+## TL;DR
 
-### 1. Open Directory
+- **What**: React 18 + Vite frontend for career guidance, ATS resume scoring, and job matching.
+- **Stack**: TypeScript, Tailwind CSS, Radix UI, Zustand, TanStack Query, Recharts.
+- **Backend Sync**: REST + Server-Sent Events (SSE) talking to a FastAPI/Supabase service.
+- **Key Features**: Multi-step onboarding wizard, real-time AI stream processing, interactive resume scoring, and role-based dashboards.
 
-Move to the `frontend` folder:
+---
+
+## Project
+
+- **Problem**: Job seekers lack structured career advice, submit resumes that fail automated ATS filters, and cannot pinpoint their missing skills for open roles.
+- **Solution**: A mobile-first web app that converts raw user input into actionable career steps through conversational skill tests, live PDF resume scoring, and skill-gap visualisations.
+
+---
+
+## Architecture
+
+- **React 18 + Vite**: Fast HMR and strictly typed TypeScript frontend.
+- **Zustand**: Client-only state (active session, multi-step onboarding wizard, UI filters).
+- **TanStack Query**: Server state caching, deduplication, and automated background refetching.
+- **Tailwind CSS + Radix UI**: Accessible primitives (dialogs, tabs, dropdowns) with utility styling.
+- **Recharts**: Custom SVG score rings and radar charts for skill gaps and ATS analysis.
+- **FastAPI / SSE**: Axios for REST endpoints; native `EventSource` for streaming real-time AI assessment tokens.
+
+---
+
+## Engineering
+
+- **Auth & Route Guards**: Passwordless OTP flow with JWT bearer tokens in local storage. Custom `Protected` router wrapper handles session validation and role-based redirects.
+- **Real-Time SSE Streaming**: Async event parser for AI question generation and onboarding pipelines. Manages buffer parsing and connection teardown without blocking the main UI thread.
+- **State Segregation**: Separated volatile UI state (Zustand) from remote records (TanStack Query) to stop redundant API calls on filter changes.
+- **Resume Ingestion**: Drag-and-drop PDF upload with client-side MIME/size validation and asynchronous polling for ATS analysis results.
+- **Accessibility & Mobile-First**: Built on Radix primitives to guarantee keyboard navigation, ARIA roles, and high contrast on budget devices.
+
+---
+
+## What I Learned
+
+- **SSE Lifecycle**: `EventSource` requires explicit teardown in React hook cleanups; missed cleanups create zombie streams during route transitions.
+- **Store Splitting**: Keeping server cache out of Zustand prevents stale state bugs and eliminates unnecessary re-renders in multi-step wizards.
+- **Pragmatic Accessibility**: Using headless UI primitives gives full layout freedom without having to hand-roll complex keyboard and ARIA behaviours.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Installation
 
 ```bash
 cd frontend
-```
-
-### 2. Configure Environment Variables
-
-Copy the sample file:
-
-```bash
 cp .env.example .env
-```
-
-Settings in `.env`:
-
-| Variable | Required | Description | Default |
-|---|---|---|---|
-| `VITE_API_BASE_URL` | Yes | Backend server root URL | `http://localhost:8000` |
-| `VITE_ADMIN_SECRET` | Yes | Admin secret for job management | `your-admin-secret-for-job-crud` |
-| `VITE_APP_NAME` | No | App name displayed in UI | `SkillBridge AI` |
-| `VITE_APP_ENV` | No | Runtime environment | `development` |
-
-### 3. Install Packages
-
-```bash
 npm install
-```
-
-### 4. Start Development Server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+App runs at `http://localhost:5173`.
 
----
+### Environment Variables
 
-## Available Scripts
-
-| Command | Action |
+| Variable | Description |
 |---|---|
-| `npm run dev` | Starts Vite development server with hot reload |
-| `npm run build` | Checks types and builds production bundle into `dist/` |
-| `npm run preview` | Runs a local server to test the production build |
-| `npm run lint` | Runs ESLint across source files |
+| `VITE_API_BASE_URL` | Backend API URL (default: `http://localhost:8000`) |
+| `VITE_ADMIN_SECRET` | Admin secret for job management (matches backend `ADMIN_SECRET`) |
+| `VITE_DEMO_MODE` | Toggle demo account quick-login bar |
 
 ---
 
-## Application Routes
+## Routes
 
-| Path | View | Target Audience | Purpose |
-|---|---|---|---|
-| `/` | LandingPage | All visitors | Shows features and quick links |
-| `/login` | AuthPage (Login) | All users | Accepts email to send a login code |
-| `/verify-otp` | AuthPage (Verify) | All users | Verifies the 6-digit login code |
-| `/onboarding/*` | OnboardingWizard | New users | Guides profile setup and role selection |
-| `/dashboard` | DashboardPage | Logged-in users | Displays user progress, skill scores, and job matches |
-| `/assessment` | AssessmentPage | Job seekers | Runs dynamic AI skill tests |
-| `/gap-analysis` | GapAnalysisPage | Job seekers | Shows skill gaps and learning paths |
-| `/resume-analysis` | ResumeAnalysisPage | Job seekers | Checks PDF resumes and suggests improvements |
-| `/jobs` | JobsPage | Job seekers | Lists and filters active jobs |
-| `/admin` | AdminPage | Administrators | Adds, edits, and removes job postings |
-
----
-
-## Project Structure
-
-```
-frontend/
-├── src/
-│   ├── components/     # UI building blocks (buttons, dialogs, layouts)
-│   ├── constants/      # App constants and role names
-│   ├── hooks/          # Custom React hooks
-│   ├── modules/        # Feature areas (assessment, gap analysis, jobs, profile)
-│   ├── pages/          # Route view components
-│   ├── services/       # API call wrappers
-│   ├── store/          # Zustand state stores
-│   ├── types/          # TypeScript interfaces and types
-│   ├── App.tsx         # Main route declarations
-│   ├── main.tsx        # React mount entry point
-│   └── index.css       # Tailwind directives and custom styles
-├── public/             # Static files
-├── package.json        # Dependencies and scripts
-├── vite.config.ts      # Vite configuration
-└── tailwind.config.ts  # Tailwind CSS configuration
-```
-
----
-
-## Troubleshooting
-
-- **Network error on login:**
-  - Make sure the backend server runs on `http://localhost:8000`.
-  - Check `VITE_API_BASE_URL` in `frontend/.env`.
-  - Check `CORS_ORIGINS` in `backend/.env`.
-- **Finding the login code:**
-  - Look at the terminal running the backend.
-  - The server prints the 6-digit code there.
-- **Port 5173 is busy:**
-  - Vite offers port 5174 automatically. Press `y` to accept it.
-  - Update `CORS_ORIGINS` in `backend/.env` if you change ports.
+| Path | Component | Description |
+|---|---|---|
+| `/auth` | `AuthPage` | Passwordless email login and OTP verification |
+| `/onboarding` | `OnboardingPage` | Multi-step career and demographic wizard |
+| `/processing` | `ProcessingPage` | SSE real-time processing stream for AI analysis |
+| `/dashboard` | `DashboardPage` | Candidate overview, skill metrics, and quick actions |
+| `/resume-analysis` | `ResumeAnalysisPage` | Resume scoring, ATS feedback, and bullet improver |
+| `/gap-analysis` | `GapAnalysisPage` | Skill deficit breakdown and learning roadmap |
+| `/profile` | `ProfilePage` | User profile, demographics, and resume upload |
+| `/jobs` | `JobsPage` | Job listings with search, filters, and match scores |
+| `/interview` | `MockInterviewPage` | Conversational AI interview simulator |
+| `/government` | `GovernmentDashboard` | Macro workforce trends and regional analytics |
+| `/admin` | `AdminPage` | Administrative job CRUD operations |
+| `/admin/resources` | `ResourcesAdmin` | Curated learning resource administration |

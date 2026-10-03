@@ -2,21 +2,14 @@ export interface Question {
   question: string;
   question_type: 'text' | 'mcq' | 'rating';
   options: string[] | null;
-  allows_multiple?: boolean;
-  allows_other?: boolean;
-  skill_probing: string;
-}
-
-export interface AssessmentBatch {
-  questions: Question[];
   phase: number;
   phase_name: string;
+  skill_probing: string;
 }
 
 export interface AssessmentSession {
   session_id: string;
-  question?: Question; // Deprecated but kept for compatibility during transition
-  batch?: AssessmentBatch;
+  question: Question;
   phase: number;
   phase_name: string;
   question_number: number;
@@ -25,9 +18,8 @@ export interface AssessmentSession {
   max_retakes: number;
   can_resume: boolean;
   is_complete: boolean;
+  // NOTE: skills_found imported specifically where needed or kept loose here 
   skills_found?: any[]; 
-  assessment_summary?: string;
-  can_retake?: boolean;
 }
 
 export interface AssessmentStatus {
